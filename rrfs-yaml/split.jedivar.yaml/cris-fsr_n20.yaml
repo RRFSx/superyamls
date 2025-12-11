@@ -25,6 +25,7 @@
          derived variables: [brightnessTemperature]
          channels: *cris-fsr_n20_channels
 
+       # --------------------
        # Observation Operator
        # --------------------
        obs operator:
@@ -45,6 +46,7 @@
          - localization method: Horizontal Gaspari-Cohn
            lengthscale: 300e3 # orig
 
+      # ------------------------------------
       # Observation Bias Correction (VarBC)
       # ------------------------------------
        obs bias:
@@ -78,11 +80,13 @@
                ratio for small dataset: 2.0
            output file: data/satbias_out/cris-fsr_n20.satbias_cov.nc
 
-       # Observation Pre Filters (QC)
-       # ----------------------------
-       # ----------------------------
+       # -----------------------------------------
+       # Observation Pre Filters (QC): steps 0-6 
+       # -----------------------------------------
        obs pre filters:
+       # -------------------------------
        # Step 0: Create Diagnostic Flags
+       # -------------------------------
        - filter: Create Diagnostic Flags
          filter variables:
          - name: brightnessTemperature
@@ -113,8 +117,10 @@
            initial value: false
            force reinitialization: false
 
+       # ----------------------------------------------------------------
        # Step 1 : Create Derived Variables for radiane to BT conversion
-       # step 1a:  Assign channel wavenumbers in m-1
+       #          Assign channel wavenumbers in m-1
+       # ----------------------------------------------------------------
        - filter: Variable Assignment
          assignments:
          - name: MetaData/sensorCentralWavenumber
@@ -216,7 +222,9 @@
                intercept: 116812.5
                use channel numbers: true
 
+       # --------------------------------------------------------
        # Step 2: Transform radiance to brightness temperature
+       # --------------------------------------------------------
        - filter: Variable Transforms
          Transform: SatBrightnessTempFromRad
          transform from:
@@ -230,8 +238,9 @@
          planck2: 1.4387774e-2
          #SkipWhenNoObs: False
 
-
+       # ----------------------------------
        # Step 3: Assign Observation Error
+       # ----------------------------------
        - filter: Perform Action
          filter variables:
          - name: brightnessTemperature
@@ -241,7 +250,9 @@
            name: assign error
            error parameter vector: *cris-fsr_n20_error
 
+       # ----------------------------------
        # Step 4: Create cloudFree variable
+       # ----------------------------------
        - filter: Variable Assignment
          assignments:
          - name: DerivedMetaData/cloudFree
@@ -270,10 +281,10 @@
        #  - name: reject
        #    #- name: reduce obs space
 
-
+       # ----------------------------------------
        # Step 5: Observation Range Sanity Check
-       # Valid range: (50, 550)
-       # -----------------------------
+       #         Valid range: (50, 550)
+       # ----------------------------------------
        - filter: Bounds Check
          filter variables:
          - name: brightnessTemperature
@@ -283,8 +294,9 @@
          action:
            name: reject
 
-       # Step 5: Data Thinning
-       # -----------------------------
+       # -----------------------
+       # Step 6: Data Thinning
+       # ------------------------
        - filter: Gaussian Thinning
          filter variables:
          - name: brightnessTemperature
@@ -300,11 +312,13 @@
            flag: Thinning
          - name: reduce obs space
 
-
-       # Observation post Filters
-       # -----------------------------
+       # ---------------------------------------
+       # Observation post Filters (steps 7-17)
+       # ----------------------------------------
        obs post filters:
-       # Step 6: online geo-domain Check, rejecting observations outside of regional MPAS domain
+       # ----------------------------------------------------------------------------------------
+       # Step 7: online geo-domain Check, rejecting observations outside of regional MPAS domain
+       # ----------------------------------------------------------------------------------------
        - filter: Bounds Check
          filter variables:
          - name: brightnessTemperature
@@ -319,8 +333,10 @@
            flag: GeoDomainCheck
          - name: reject
 
-       # Step 7: wavenumber Check, remove observations with wavenumber > 2400 cm-1 if solarzenith angle > 88.999  and containing water fraction in the field of view
+       # ------------------------------------------------------------------------------------------------------------------------------------------------------------
+       # Step 8: wavenumber Check, remove observations with wavenumber > 2400 cm-1 if solarzenith angle > 88.999  and containing water fraction in the field of view
        # Note, currenlty, CrIS wavenumber > 2000 are not assimilated, this is for future refernce (i.e., CrIS short-wave DA etc.)
+       # ------------------------------------------------------------------------------------------------------------------------------------------------------------
        - filter: Perform Action
          filter variables:
          - name: brightnessTemperature
@@ -336,12 +352,12 @@
          action:
            name: reject
 
-       # -----------------------------------------------------------------------------------------------------------
-       # Step 8: Observation Error Inflation: based on Wavenumber/solza/water_fac
+       # -----------------------------------------------------------------------------------------------------------------------------------------------
+       # Step 9: Observation Error Inflation: based on Wavenumber/solza/water_fac
        # Error Inflation Factor (EIF) for channels with wavenumber in the range of [2000, 2400] cm-1 during daytime (sun zenith angle < 89) and containing
        # water fraction in the filed of view
        # Note, currenlty, CrIS wavenumber > 2000 are not assimilated, this is for future refernce (i.e., CrIS short-wave DA etc.)
-       # -----------------------------
+       # -----------------------------------------------------------------------------------------------------------------------------------------------
        - filter: Perform Action
          filter variables:
          - name: brightnessTemperature
@@ -354,12 +370,10 @@
              options:
                channels: *cris-fsr_n20_channels
 
-
        # -----------------------------------------------------------------------------------------------------------
-       # Step 9: Observation Error inflation: Topography Check (H> 2000m)
+       # Step 10: Observation Error inflation: Topography Check (H> 2000m)
        # Error Inflation Factor (EIF) as a function of terrain height, channel, and surface-to-space transmittance.
        # -----------------------------------------------------------------------------------------------------------
-       # Step 9: Error inflation: Topography Check (H> 2000m)
        - filter: Perform Action
          filter variables:
          - name: brightnessTemperature
@@ -373,10 +387,10 @@
                sensor: *sensor_id
                channels: *cris-fsr_n20_channels
 
-       # -----------------------------------------------------------------------------------------------------------
-       # Step 10: Observation Error inflation: Model top Transmittance Check
+       # -----------------------------------------------------------------------------------------------------------------------------------------------
+       # Step 11: Observation Error inflation: Model top Transmittance Check
        # This obsfunction calculates the observation error inflation factor for satellite radiances as a function of model top-to-space transmittance.
-       # -----------------------------------------------------------------------------------------------------------
+       # ------------------------------------------------------------------------------------------------------------------------------------------------
        - filter: Perform Action
          filter variables:
          - name: brightnessTemperature
@@ -389,15 +403,15 @@
              options:
                channels: *cris-fsr_n20_channels
 
-       # -----------------------------------------------------------------------------------------------------------
-       # Step 11:  Cloud Detection Check
+       # -------------------------------------------------------------------------------------------------------------------------------
+       # Step 12:  Cloud Detection Check
        # This obsFunction is designed to perform cloud detection using the Minimum Residual Method for Infrared sensors
        # using selected channels from 15 microns CO2 absorption band.
        # The brightnessTemperature is rejected if the QC flags from this ObsFunction output value is bigger than maxvalue=1.0e-12
        # 0 channel is not affected by cloud (clear channel)
        # 1 channel is affected by clouds
        # 2 channel is not affected by clouds but too sensitive to surface condition
-       # -----------------------------
+       # ----------------------------------------------------------------------------------------------------------------------------
        - filter: Bounds Check
          filter variables:
          - name: brightnessTemperature
@@ -418,7 +432,9 @@
            ignore: rejected observations
          - name: reject
 
-       # Step 12: Surface Temperature Jacobian Check over Land, reduce influence of land pionts on window channels, surface temperaure jacobian oove land larger than 0.2, rejected
+       # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+       # Step 13: Surface Temperature Jacobian Check over Land, reduce influence of land pionts on window channels, surface temperaure jacobian oove land larger than 0.2, rejected
+       # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
        - filter: Bounds Check
          filter variables:
          - name: brightnessTemperature
@@ -437,12 +453,12 @@
            ignore: rejected observations
          - name: reject
 
-       # -----------------------------------------------------------------------------------------------------------
-       # Step 13: NSST Retrieval Check
+       # ------------------------------------------------------------------------------------------------------------------------------------------------------
+       # Step 14: NSST Retrieval Check
        # This obsFunction is designed to perform QC using retrieved near-sea-surface temperature (NSST) from Infrared radiances.
        # The output of this obsFunction is the default JEDI QC flags: 0 = channel is retained for assimilation; 1 = channel is not retained for assimilation.
        # The brightness_temperature is rejected if the QC flags from this ObsFunction output value is bigger than maxvalue=1.0e-12.
-       # -----------------------------------------------------------------------------------------------------------
+       # ---------------------------------------------------------------------------------------------------------------------------------------------------------
        - filter: Bounds Check
          filter variables:
          - name: brightnessTemperature
@@ -461,10 +477,11 @@
            flag: NearSSTRetCheckIR
          - name: reject
 
-
-       # Step 14: Error inflation: Surface Jacobians Check
+       # ----------------------------------------------------------------------------------------------------------
+       # Step 15: Error inflation: Surface Jacobians Check
        # This obsFunction is designed to compute observation error inflation factor for brightness temperature as
        # a function of weighted surface temperature jacobian and surface emissivity jacobian.
+       # -----------------------------------------------------------------------------------------------------------
        - filter: Perform Action
          filter variables:
          - name: brightnessTemperature
@@ -480,9 +497,10 @@
                obserr_dtempf: [0.50, 2.00, 4.00, 2.00, 4.00]
                sensor: *sensor_id
 
-
-       # Step 15: Gross check
+       # -------------------------------------------------------------------------------------------------------------------------------------------
+       # Step 16: Gross check
        # Filter out data if |obs-h(x)| > Residual Threshold; Residual Threshold = MIN( (3.0 * ( 1 / Errflat )^2 * (1 / Errftaotop )^2), ErrobsMax )
+       # -------------------------------------------------------------------------------------------------------------------------------------------
        - filter: Background Check
          filter variables:
          - name: brightnessTemperature
@@ -509,8 +527,9 @@
            ignore: rejected observations
          - name: reject
 
-
-       # Step 16: Useflag Check
+       # ------------------------
+       # Step 17: Useflag Check
+       # ------------------------
        - filter: Bounds Check
          filter variables:
          - name: brightnessTemperature
