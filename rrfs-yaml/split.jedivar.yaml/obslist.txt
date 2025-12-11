@@ -47,6 +47,10 @@ sfcshp_uv280
 sfcshp_uv282
 sfcshp_uv284
 vadwnd_uv224
+satwnd_uv245_270
+satwnd_uv245_272
+satwnd_uv246_270
+satwnd_uv246_272
 amsua_n19
 atms_n20
 atms_npp
@@ -55,3 +59,5 @@ abi_g18
 atms_n21
 amsua_metop-b
 amsua_metop-c
+cris-fsr_n20
+cris-fsr_n21
