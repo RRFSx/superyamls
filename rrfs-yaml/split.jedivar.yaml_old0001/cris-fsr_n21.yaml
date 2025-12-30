@@ -1,29 +1,29 @@
      - obs space:
-         name: cris-fsr_n20
-         _anchor_channels: &cris-fsr_n20_channels 1
-         _anchor_use_flag: &cris-fsr_n20_use_flag [1]
-         _anchor_use_flag_clddet: &cris-fsr_n20_use_flag_clddet [1]
-         _anchor_error: &cris-fsr_n20_error [1]
-         _anchor_obserr_bound_max: &cris-fsr_n20_obserr_bound_max [1]
+         name: cris-fsr_n21
+         _anchor_channels: &cris-fsr_n21_channels 1
+         _anchor_use_flag: &cris-fsr_n21_use_flag [1]
+         _anchor_use_flag_clddet: &cris-fsr_n21_use_flag_clddet [1]
+         _anchor_error: &cris-fsr_n21_error [1]
+         _anchor_obserr_bound_max: &cris-fsr_n21_obserr_bound_max [1]
          distribution:
            name: "RoundRobin"
            halo size: 100e3
          obsdatain:
            engine:
              type: H5File
-             obsfile: data/obs/ioda_crisf4_n20.nc
+             obsfile: data/obs/ioda_crisf4_n21.nc
              missing file action: "warn"
          obsdataout:
-           empty obs space action: "@emptyObsSpaceAction@"
+           empty obs space action: "skip output"
            engine:
              type: H5File
-             obsfile: jdiag_cris-fsr_n20.nc
+             obsfile: jdiag_cris-fsr_n21.nc
          io pool:
            max pool size: 1
          observed variables: [radiance]
          simulated variables: [brightnessTemperature]
          derived variables: [brightnessTemperature]
-         channels: *cris-fsr_n20_channels
+         channels: *cris-fsr_n21_channels
 
        # --------------------
        # Observation Operator
@@ -33,7 +33,7 @@
          Absorbers: [H2O,O3,CO2]
          SurfaceWindGeoVars: uv
          obs options:
-           Sensor_ID: cris-fsr_n20
+           Sensor_ID: cris-fsr_n21
            EndianType: little_endian
            CoefficientPath: data/crtm/
            IRwaterCoeff: Nalli
@@ -50,16 +50,16 @@
       # Observation Bias Correction (VarBC)
       # ------------------------------------
        obs bias:
-         input file: data/satbias_in/cris-fsr_n20.satbias.nc
-         output file: data/satbias_out/cris-fsr_n20.satbias.nc
+         input file: data/satbias_in/cris-fsr_n21.satbias.nc
+         output file: data/satbias_out/cris-fsr_n21.satbias.nc
          variational bc:
            predictors:
            - name: constant
            - name: lapseRate
              order: 2
-             tlapse: &cris-fsr_n20_tlapse  data/satbias_in/cris-fsr_n20.tlapse.txt
+             tlapse: &cris-fsr_n21_tlapse  data/satbias_in/cris-fsr_n21.tlapse.txt
            - name: lapseRate
-             tlapse: *cris-fsr_n20_tlapse
+             tlapse: *cris-fsr_n21_tlapse
            - name: emissivityJacobian
            - name: sensorScanAngle
              order: 4
@@ -74,14 +74,14 @@
            step size: 1.0e-4
            largest analysis variance: 10000.0
            prior:
-             input file: data/satbias_in/cris-fsr_n20.satbias_cov.nc
+             input file: data/satbias_in/cris-fsr_n21.satbias_cov.nc
              inflation:
                ratio: 1.1
                ratio for small dataset: 2.0
-           output file: data/satbias_out/cris-fsr_n20.satbias_cov.nc
+           output file: data/satbias_out/cris-fsr_n21.satbias_cov.nc
 
        # -----------------------------------------
-       # Observation Pre Filters (QC): steps 0-6
+       # Observation Pre Filters (QC): steps 0-6 
        # -----------------------------------------
        obs pre filters:
        # -------------------------------
@@ -90,7 +90,7 @@
        - filter: Create Diagnostic Flags
          filter variables:
          - name: brightnessTemperature
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
          flags:
          - name: ScanEdgeRemoval
            initial value: false
@@ -229,10 +229,10 @@
          Transform: SatBrightnessTempFromRad
          transform from:
            name: ObsValue/radiance
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
          spectral variable:
            name: MetaData/sensorCentralWavenumber
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
          radiance units: wavenumber
          planck1: 1.191042953e-16
          planck2: 1.4387774e-2
@@ -244,11 +244,11 @@
        - filter: Perform Action
          filter variables:
          - name: brightnessTemperature
-           channels: *cris-fsr_n20_channels
-           sensor: cris-fsr_n20
+           channels: *cris-fsr_n21_channels
+           sensor: &sensor_id cris-fsr_n21
          action:
            name: assign error
-           error parameter vector: *cris-fsr_n20_error
+           error parameter vector: *cris-fsr_n21_error
 
        # ----------------------------------
        # Step 4: Create cloudFree variable
@@ -270,7 +270,7 @@
        #- filter: Domain Check
        #  filter variables:
        #  - name: brightnessTemperature
-       #    channels: *cris-fsr_n20_channels
+       #    channels: *cris-fsr_n21_channels
        #  where:
        #  - variable:
        #      name: MetaData/sensorScanPosition
@@ -288,7 +288,7 @@
        - filter: Bounds Check
          filter variables:
          - name: brightnessTemperature
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
          minvalue: 50.00001
          maxvalue: 549.99999
          action:
@@ -300,7 +300,7 @@
        - filter: Gaussian Thinning
          filter variables:
          - name: brightnessTemperature
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
          horizontal_mesh: 60
          use_reduced_horizontal_grid: true
          distance_norm: geodesic
@@ -322,7 +322,7 @@
        - filter: Bounds Check
          filter variables:
          - name: brightnessTemperature
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
          test variables:
          - name: GeoVaLs/observable_domain_mask
            flag all filter variables if any test variable is out of bounds: true
@@ -361,14 +361,14 @@
        - filter: Perform Action
          filter variables:
          - name: brightnessTemperature
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
          action:
            name: inflate error
            inflation variable:
              name: ObsFunction/ObsErrorFactorWavenumIR
-             channels: *cris-fsr_n20_channels
+             channels: *cris-fsr_n21_channels
              options:
-               channels: *cris-fsr_n20_channels
+               channels: *cris-fsr_n21_channels
 
        # -----------------------------------------------------------------------------------------------------------
        # Step 10: Observation Error inflation: Topography Check (H> 2000m)
@@ -377,15 +377,15 @@
        - filter: Perform Action
          filter variables:
          - name: brightnessTemperature
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
          action:
            name: inflate error
            inflation variable:
              name: ObsFunction/ObsErrorFactorTopoRad
-             channels: *cris-fsr_n20_channels
+             channels: *cris-fsr_n21_channels
              options:
-               sensor: cris-fsr_n20
-               channels: *cris-fsr_n20_channels
+               sensor: *sensor_id
+               channels: *cris-fsr_n21_channels
 
        # -----------------------------------------------------------------------------------------------------------------------------------------------
        # Step 11: Observation Error inflation: Model top Transmittance Check
@@ -394,14 +394,14 @@
        - filter: Perform Action
          filter variables:
          - name: brightnessTemperature
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
          action:
            name: inflate error
            inflation variable:
              name: ObsFunction/ObsErrorFactorTransmitTopRad
-             channels: *cris-fsr_n20_channels
+             channels: *cris-fsr_n21_channels
              options:
-               channels: *cris-fsr_n20_channels
+               channels: *cris-fsr_n21_channels
 
        # -------------------------------------------------------------------------------------------------------------------------------
        # Step 12:  Cloud Detection Check
@@ -415,16 +415,16 @@
        - filter: Bounds Check
          filter variables:
          - name: brightnessTemperature
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
          test variables:
          - name: ObsFunction/CloudDetectMinResidualIR
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
            options:
-             channels: *cris-fsr_n20_channels
-             use_flag: *cris-fsr_n20_use_flag
-             use_flag_clddet: *cris-fsr_n20_use_flag_clddet
+             channels: *cris-fsr_n21_channels
+             use_flag: *cris-fsr_n21_use_flag
+             use_flag_clddet: *cris-fsr_n21_use_flag_clddet
              obserr_dtempf: [0.50, 2.00, 4.00, 2.00, 4.00]
-             error parameter vector: *cris-fsr_n20_error
+             error parameter vector: *cris-fsr_n21_error
          maxvalue: 1.0e-12
          actions:
          - name: set
@@ -438,14 +438,14 @@
        - filter: Bounds Check
          filter variables:
          - name: brightnessTemperature
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
          where:
          - variable:
              name: GeoVaLs/water_area_fraction
            maxvalue: 0.99
          test variables:
          - name: ObsDiag/brightness_temperature_jacobian_skin_temperature_at_surface
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
          maxvalue: 0.2
          actions:
          - name: set
@@ -462,13 +462,13 @@
        - filter: Bounds Check
          filter variables:
          - name: brightnessTemperature
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
          test variables:
          - name: ObsFunction/NearSSTRetCheckIR
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
            options:
-             channels: *cris-fsr_n20_channels
-             use_flag: *cris-fsr_n20_use_flag
+             channels: *cris-fsr_n21_channels
+             use_flag: *cris-fsr_n21_use_flag
              obserr_demisf: [0.01, 0.02, 0.03, 0.02, 0.03]
              obserr_dtempf: [0.50, 2.00, 4.00, 2.00, 4.00]
          maxvalue: 1.0e-12
@@ -485,17 +485,17 @@
        - filter: Perform Action
          filter variables:
          - name: brightnessTemperature
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
          action:
            name: inflate error
            inflation variable:
              name: ObsFunction/ObsErrorFactorSurfJacobianRad
-             channels: *cris-fsr_n20_channels
+             channels: *cris-fsr_n21_channels
              options:
-               channels: *cris-fsr_n20_channels
+               channels: *cris-fsr_n21_channels
                obserr_demisf: [0.01, 0.02, 0.03, 0.02, 0.03]
                obserr_dtempf: [0.50, 2.00, 4.00, 2.00, 4.00]
-               sensor: cris-fsr_n20
+               sensor: *sensor_id
 
        # -------------------------------------------------------------------------------------------------------------------------------------------
        # Step 16: Gross check
@@ -504,23 +504,23 @@
        - filter: Background Check
          filter variables:
          - name: brightnessTemperature
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
          function absolute threshold:
          - name: ObsFunction/ObsErrorBoundIR
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
            options:
-             channels: *cris-fsr_n20_channels
+             channels: *cris-fsr_n21_channels
              obserr_bound_latitude:
                name: ObsFunction/ObsErrorFactorLatRad
                options:
                  latitude_parameters: [25.0, 0.5, 0.04, 1.0]
              obserr_bound_transmittop:
                name: ObsFunction/ObsErrorFactorTransmitTopRad
-               channels: *cris-fsr_n20_channels
+               channels: *cris-fsr_n21_channels
                options:
-                 channels: *cris-fsr_n20_channels
-             obserr_bound_max: *cris-fsr_n20_obserr_bound_max
-             error parameter vector: *cris-fsr_n20_error
+                 channels: *cris-fsr_n21_channels
+             obserr_bound_max: *cris-fsr_n21_obserr_bound_max
+             error parameter vector: *cris-fsr_n21_error
          actions:
          - name: set
            flag: GrossCheck
@@ -533,13 +533,13 @@
        - filter: Bounds Check
          filter variables:
          - name: brightnessTemperature
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
          test variables:
          - name: ObsFunction/ChannelUseflagCheckRad
-           channels: *cris-fsr_n20_channels
+           channels: *cris-fsr_n21_channels
            options:
-             channels: *cris-fsr_n20_channels
-             use_flag: *cris-fsr_n20_use_flag
+             channels: *cris-fsr_n21_channels
+             use_flag: *cris-fsr_n21_use_flag
          minvalue: 1.0e-12
          actions:
          - name: set

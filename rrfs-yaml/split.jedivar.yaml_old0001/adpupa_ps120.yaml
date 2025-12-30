@@ -24,13 +24,10 @@
          simulated variables: [stationPressure]
 
        obs operator:
-         name: SfcCorrected
-         correction scheme to use: GSL
+         name: SfcPCorrected
+         da_psfc_scheme: GSI
          geovar_sfc_geomz: geopotential_height_at_surface
          geovar_geomz: geopotential_height
-         variables:
-         - name: stationPressure
-
        linear obs operator:
          name: Identity
 
