@@ -51,6 +51,8 @@ satwnd_uv245_270
 satwnd_uv245_272
 satwnd_uv246_270
 satwnd_uv246_272
+satwnd_uv247_270
+satwnd_uv247_272
 amsua_n19
 atms_n20
 atms_npp
