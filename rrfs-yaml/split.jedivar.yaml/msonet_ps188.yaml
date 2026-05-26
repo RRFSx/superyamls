@@ -70,7 +70,7 @@
 #           - name: stationPressure
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:

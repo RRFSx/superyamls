@@ -40,6 +40,34 @@
          # ------------------
          # wind (247)
          # ------------------
+         # Accept, reject, or passivate (monitor)
+         - filter: Perform Action
+           udescriptor: "iuse_check"
+           filter variables:
+           - name: windEastward
+           - name: windNorthward
+           where:
+           - variable: ObsType/windEastward
+             is_in: 247
+           - variable: MetaData/satelliteIdentifier
+             is_in: 270
+           action:
+             name: accept # accept, reject, passivate
+
+         # Reject all obs not 247
+         - filter: Perform Action
+           udescriptor: "obs_type_check"
+           filter variables:
+           - name: windEastward
+           - name: windNorthward
+           where:
+           - variable: ObsType/windEastward
+             is_not_in: 247
+           - variable: MetaData/satelliteIdentifier
+             is_not_in: 270
+           action:
+             name: reduce obs space
+
          # Time window filter
          - filter: Bounds Check
            udescriptor: "time_window_check"
@@ -66,7 +94,7 @@
            - name: windNorthward
            min_spacing: PT90M
            tolerance: PT0H
-           seed_time: "@analysisDate@"
+           seed_time: "2024-05-27T00:00:00Z"
            category_variable:
              name: MetaData/longitude_latitude_pressure
            where:

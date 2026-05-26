@@ -1,6 +1,6 @@
 _member: &memberConfig
-  date: &analysisDate '@analysisDate@'
-  state variables: &incvars [water_vapor_mixing_ratio_wrt_moist_air, air_pressure_at_surface, air_temperature, northward_wind, eastward_wind, cloud_liquid_water, cloud_liquid_ice, rain_water, snow_water, graupel, equivalent_reflectivity_factor, upward_air_velocity]
+  date: &ANALYSIS_DATE '@ANALYSIS_DATE@'
+  state variables: &incvars [water_vapor_mixing_ratio_wrt_moist_air, air_pressure_at_surface, air_temperature, northward_wind, eastward_wind]
   stream name: ensemble
 
 output:
@@ -27,7 +27,7 @@ variational:
 cost function:
   cost type: 3D-Var
   time window:
-     begin: '@beginDate@'
+     begin: '@BEGIN_DATE@'
      length: PT4H
   jb evaluation: false
   geometry:
@@ -74,7 +74,7 @@ cost function:
     - w
     - upward_air_velocity
     filename: mpasout.nc
-    date: *analysisDate
+    date: *ANALYSIS_DATE
   background error:
     covariance model: hybrid
     components:
@@ -82,12 +82,6 @@ cost function:
         covariance model: SABER
         saber central block:
           saber block name: gsi static covariance
-          active variables: &ctlvars
-          - eastward_wind
-          - northward_wind
-          - air_temperature
-          - relative_humidity
-          - air_pressure_at_surface
           read:
             gsi akbk: foo.nc
             gsi error covariance file: berror_stats
@@ -123,11 +117,8 @@ cost function:
           - northward_wind
           - air_temperature
           - air_pressure_at_surface
+          - air_pressure
           - water_vapor_mixing_ratio_wrt_moist_air
-        linear variable change:
-          linear variable change name: Control2Analysis
-          input variables: *ctlvars
-          output variables: *incvars
       weight:
         value: "@HYB_WGT_STATIC@"
     - covariance:
@@ -167,6 +158,7 @@ cost function:
            engine:
              type: H5File
              obsfile: data/obs/ioda_mrms_refl.nc
+             missing file action: "warn"
          obsdataout:
            engine:
              type: H5File
@@ -273,7 +265,7 @@ cost function:
 #           - name: airTemperature
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -549,7 +541,7 @@ cost function:
 #           - name: airTemperature
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -823,7 +815,7 @@ cost function:
            - name: airTemperature
            min_spacing: PT90M
            tolerance: PT0H
-           seed_time: "@analysisDate@"
+           seed_time: "@ANALYSIS_DATE@"
            category_variable:
              name: MetaData/stationIdentification
            action:
@@ -1101,7 +1093,7 @@ cost function:
 #           - name: specificHumidity
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -1376,7 +1368,7 @@ cost function:
 #           - name: specificHumidity
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -1644,7 +1636,7 @@ cost function:
            - name: specificHumidity
            min_spacing: PT90M
            tolerance: PT0H
-           seed_time: "@analysisDate@"
+           seed_time: "@ANALYSIS_DATE@"
            category_variable:
              name: MetaData/stationIdentification
            action:
@@ -1918,7 +1910,7 @@ cost function:
 #           - name: stationPressure
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -2189,7 +2181,7 @@ cost function:
            - name: stationPressure
            min_spacing: PT90M
            tolerance: PT0H
-           seed_time: "@analysisDate@"
+           seed_time: "@ANALYSIS_DATE@"
            category_variable:
              name: MetaData/stationIdentification
            action:
@@ -2467,7 +2459,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -2784,7 +2776,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -3044,14 +3036,20 @@ cost function:
          simulated variables: [windEastward, windNorthward]
 
        obs operator:
-         name: SfcCorrected
-         correction scheme to use: GSL
-         variables:
-         - name: windEastward
-         - name: windNorthward
+           name: VertInterp
+           vertical coordinate: air_pressure
+           observation vertical coordinate: pressure
+           observation vertical coordinate group: MetaData
+           interpolation method: log-linear
+           #gsi geovals:
+           #  filename: "obsout/sfc_uv_geoval_2022052619.nc"
+           #  levels_are_top_down: False
+           variables:
+           - name: windEastward
+           - name: windNorthward
 
        linear obs operator:
-         name: Identity
+         name: VertInterp
 
        obs error:
          covariance model: diagonal
@@ -3094,7 +3092,7 @@ cost function:
            - name: windNorthward
            min_spacing: PT90M
            tolerance: PT0H
-           seed_time: "@analysisDate@"
+           seed_time: "@ANALYSIS_DATE@"
            category_variable:
              name: MetaData/stationIdentification
            action:
@@ -3407,7 +3405,7 @@ cost function:
 #           - name: airTemperature
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -3681,7 +3679,7 @@ cost function:
 #           - name: airTemperature
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -3955,7 +3953,7 @@ cost function:
 #           - name: specificHumidity
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -4229,7 +4227,7 @@ cost function:
 #           - name: specificHumidity
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -4499,7 +4497,7 @@ cost function:
 #           - name: stationPressure
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -4776,7 +4774,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -5086,7 +5084,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -5393,7 +5391,7 @@ cost function:
 #           - name: airTemperature
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -5667,7 +5665,7 @@ cost function:
 #           - name: specificHumidity
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -5944,7 +5942,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -6251,7 +6249,7 @@ cost function:
 #           - name: airTemperature
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -6525,7 +6523,7 @@ cost function:
 #           - name: airTemperature
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -6799,7 +6797,7 @@ cost function:
 #           - name: airTemperature
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -7073,7 +7071,7 @@ cost function:
 #           - name: airTemperature
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -7347,7 +7345,7 @@ cost function:
 #           - name: specificHumidity
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -7624,7 +7622,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -7934,7 +7932,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -8244,7 +8242,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -8554,7 +8552,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -8935,7 +8933,7 @@ cost function:
 #           - name: airTemperature
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -9209,7 +9207,7 @@ cost function:
 #           - name: specificHumidity
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -9476,7 +9474,7 @@ cost function:
 #           - name: stationPressure
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -10015,7 +10013,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -10331,7 +10329,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -10682,7 +10680,7 @@ cost function:
 #           - name: airTemperature
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -10956,7 +10954,7 @@ cost function:
 #           - name: airTemperature
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -11230,7 +11228,7 @@ cost function:
 #           - name: airTemperature
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -11505,7 +11503,7 @@ cost function:
 #           - name: airTemperature
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -11779,7 +11777,7 @@ cost function:
 #           - name: specificHumidity
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -12053,7 +12051,7 @@ cost function:
 #           - name: specificHumidity
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -12328,7 +12326,7 @@ cost function:
 #           - name: specificHumidity
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -12598,7 +12596,7 @@ cost function:
 #           - name: stationPressure
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -12884,7 +12882,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -13200,7 +13198,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -13517,7 +13515,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -13833,7 +13831,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           action:
@@ -14184,7 +14182,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           where:
@@ -14591,7 +14589,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           where:
@@ -14998,7 +14996,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           where:
@@ -15128,7 +15126,7 @@ cost function:
            action:
              name: reject
 
-         # Reject obs with pressure < 150 mb and  > 400 mb
+         # Reject obs with pressure < 150 mb and > 300 mb
          - filter: Bounds Check
            udescriptor: "bounds_check_pressure"
            filter variables:
@@ -15137,7 +15135,7 @@ cost function:
            test variables:
            - name: MetaData/pressure
            minvalue: 15000.
-           maxvalue: 40000.
+           maxvalue: 30000.
            where:
            - variable: ObsType/windEastward
              is_in: 246
@@ -15371,7 +15369,7 @@ cost function:
 #           - name: windNorthward
 #           min_spacing: PT90M
 #           tolerance: PT0H
-#           seed_time: "@analysisDate@"
+#           seed_time: "@ANALYSIS_DATE@"
 #           category_variable:
 #             name: MetaData/longitude_latitude_pressure
 #           where:
@@ -15501,7 +15499,7 @@ cost function:
            action:
              name: reject
 
-         # Reject obs with pressure < 150 mb and  > 400 mb
+         # Reject obs with pressure < 150 mb and > 300 mb
          - filter: Bounds Check
            udescriptor: "bounds_check_pressure"
            filter variables:
@@ -15510,7 +15508,7 @@ cost function:
            test variables:
            - name: MetaData/pressure
            minvalue: 15000.
-           maxvalue: 40000.
+           maxvalue: 30000.
            where:
            - variable: ObsType/windEastward
              is_in: 246
@@ -15715,6 +15713,34 @@ cost function:
          # ------------------
          # wind (247)
          # ------------------
+         # Accept, reject, or passivate (monitor)
+         - filter: Perform Action
+           udescriptor: "iuse_check"
+           filter variables:
+           - name: windEastward
+           - name: windNorthward
+           where:
+           - variable: ObsType/windEastward
+             is_in: 247
+           - variable: MetaData/satelliteIdentifier
+             is_in: 270
+           action:
+             name: accept # accept, reject, passivate
+
+         # Reject all obs not 247
+         - filter: Perform Action
+           udescriptor: "obs_type_check"
+           filter variables:
+           - name: windEastward
+           - name: windNorthward
+           where:
+           - variable: ObsType/windEastward
+             is_not_in: 247
+           - variable: MetaData/satelliteIdentifier
+             is_not_in: 270
+           action:
+             name: reduce obs space
+
          # Time window filter
          - filter: Bounds Check
            udescriptor: "time_window_check"
@@ -15741,7 +15767,7 @@ cost function:
            - name: windNorthward
            min_spacing: PT90M
            tolerance: PT0H
-           seed_time: "@analysisDate@"
+           seed_time: "2024-05-27T00:00:00Z"
            category_variable:
              name: MetaData/longitude_latitude_pressure
            where:
@@ -16088,6 +16114,34 @@ cost function:
          # ------------------
          # wind (247)
          # ------------------
+         # Accept, reject, or passivate (monitor)
+         - filter: Perform Action
+           udescriptor: "iuse_check"
+           filter variables:
+           - name: windEastward
+           - name: windNorthward
+           where:
+           - variable: ObsType/windEastward
+             is_in: 247
+           - variable: MetaData/satelliteIdentifier
+             is_in: 272
+           action:
+             name: accept # accept, reject, passivate
+
+         # Reject all obs not 247
+         - filter: Perform Action
+           udescriptor: "obs_type_check"
+           filter variables:
+           - name: windEastward
+           - name: windNorthward
+           where:
+           - variable: ObsType/windEastward
+             is_not_in: 247
+           - variable: MetaData/satelliteIdentifier
+             is_not_in: 272
+           action:
+             name: reduce obs space
+
          # Time window filter
          - filter: Bounds Check
            udescriptor: "time_window_check"
@@ -16114,7 +16168,7 @@ cost function:
            - name: windNorthward
            min_spacing: PT90M
            tolerance: PT0H
-           seed_time: "@analysisDate@"
+           seed_time: "2024-05-27T00:00:00Z"
            category_variable:
              name: MetaData/longitude_latitude_pressure
            where:
@@ -18123,9 +18177,9 @@ cost function:
          horizontal_mesh: 60
          use_reduced_horizontal_grid: true
          distance_norm: maximum
-         time_mesh: '{{window_length}}'
-         time_min: '{{window_begin}}'
-         time_max: '{{window_end}}'
+         time_mesh: '@THINNING_TIME_MESH@'
+         time_min: '@THINNING_TIME_MIN@'
+         time_max: '@THINNING_TIME_MAX@'
          #  round_horizontal_bin_count_to_nearest: true
          #  partition_longitude_bins_using_mesh: true
          actions:
@@ -18631,9 +18685,9 @@ cost function:
          horizontal_mesh: 60
          use_reduced_horizontal_grid: true
          distance_norm: maximum
-         time_mesh: '{{window_length}}'
-         time_min: '{{window_begin}}'
-         time_max: '{{window_end}}'
+         time_mesh: '@THINNING_TIME_MESH@'
+         time_min: '@THINNING_TIME_MIN@'
+         time_max: '@THINNING_TIME_MAX@'
          #  round_horizontal_bin_count_to_nearest: true
          #  partition_longitude_bins_using_mesh: true
          actions:
