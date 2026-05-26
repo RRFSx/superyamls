@@ -77,19 +77,11 @@ dcObserver = {
 #
 # read observers under jcb-rdas, make modifications and output to jcb-obs1/
 #
-if not os.path.exists("./jcb-rdas"):
-    jcb_rdas_dir = "../../sorc/RDASApp/parm/jcb-rdas/observations/atmosphere"
-    if os.path.exists(jcb_rdas_dir):
-        os.symlink(jcb_rdas_dir, 'jcb-rdas')
-    else:
-        print("./jcb-rdas and ../../sorc/RDASApp/parm/jcb-rdas/observations/atmosphere not found")
-        sys.exit()
-
 for key, value in dcObserver.items():
     real_key = key
     if key.startswith("rad_"):
         real_key = key[4:]
-    finput = "./jcb-rdas/" + value + ".yaml.j2"
+    finput = "./external/jcb-rdas/observations/atmosphere/" + value + ".yaml.j2"
     outfile = open("./jcb-obs1/" + value + ".yaml.j2", 'w')
     # link to link2rrfs
     os.makedirs('./link2rrfs', exist_ok=True)
