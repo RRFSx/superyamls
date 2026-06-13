@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dir1=${1:-jcb-obs1}
+dir1=${1:-transition0}
 dir2=${2:-jcb-rdas}
 
 rm -rf .yaml.${dir1} .yaml.${dir2}
