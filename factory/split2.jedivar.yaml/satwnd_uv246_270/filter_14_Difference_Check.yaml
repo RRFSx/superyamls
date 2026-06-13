@@ -1,0 +1,17 @@
+         # Reject when pressure is more than 50 mb above tropopause
+         - filter: Difference Check
+           udescriptor: "difference_check_tropopause_pressure"
+           filter variables:
+           - name: windEastward
+           - name: windNorthward
+           reference: GeoVaLs/tropopause_pressure
+           value: MetaData/pressure
+           minvalue: -5000.  # 50 hPa above tropopause level, negative p-diff
+           where:
+           - variable: ObsType/windEastward
+             is_in: 246
+           - variable: MetaData/satelliteIdentifier
+             is_in: 270
+           action:
+             name: reject
+

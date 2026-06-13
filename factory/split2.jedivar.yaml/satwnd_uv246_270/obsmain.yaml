@@ -1,0 +1,42 @@
+     - obs space:
+         name: satwnd_uv246_270
+         distribution:
+           name: "RoundRobin"
+           halo size: 500e3
+         obsdatain:
+           engine:
+             type: H5File
+             obsfile: "data/obs/ioda_satwnd.abi_goes-16.nc"
+             missing file action: "warn"
+         obsdataout:
+           empty obs space action: "@emptyObsSpaceAction@"
+           engine:
+             type: H5File
+             obsfile: jdiag_satwnd_uv246_270.nc
+             allow overwrite: true
+         io pool:
+           max pool size: 1
+         observed variables: [windEastward, windNorthward]
+         simulated variables: [windEastward, windNorthward]
+
+       obs operator:
+           name: VertInterp
+           vertical coordinate: air_pressure
+           observation vertical coordinate: pressure
+           observation vertical coordinate group: MetaData
+           interpolation method: log-linear
+           variables:
+           - name: windEastward
+           - name: windNorthward
+
+       linear obs operator:
+         name: VertInterp
+
+       obs error:
+         covariance model: diagonal
+
+       obs localizations:
+         - localization method: Horizontal Gaspari-Cohn
+           lengthscale: 200e3 # orig
+
+       obs filters:

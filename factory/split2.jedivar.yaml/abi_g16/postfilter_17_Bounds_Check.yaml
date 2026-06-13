@@ -1,0 +1,19 @@
+       # ----------------------------------------------------------------------------------------------------------------
+       # Step 20b: Use split window chns to remove opaque clouds
+       #           reject observatiohs for Channels 7, 10-16, when OmFNBC =< -0.75 min_exclusive:true is uesed to reject
+       #           min_exclusive:true is uesed to reject when omFNBC= -0.75
+       # ------------------------------------------------------------------------------------------------------------------
+       - filter: Bounds Check
+         filter variables:
+         - name: brightnessTemperature
+           channels: 7, 10-16
+         test variables:
+         - name: DerivedMetaData/OmFNBC
+         minvalue: -0.75
+         min_exclusive: true
+         actions:
+           - name: set
+             flag: SplitWindowCheck_channel_10
+             ignore: rejected observations
+           - name: reject
+

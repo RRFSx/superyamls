@@ -1,0 +1,19 @@
+       # ---------------------------------------------------------------------------------------------------------------------------
+       # Step 2 : Initial cloud fraction check: remove observations when cloud fraction (from channel 8 or others) is more than 30%
+       #          this initial cloud fraction is applied to all 10 channels
+       # ----------------------------------------------------------------------------------------------------------------------------
+       - filter: Domain Check
+         filter variables:
+         - name: brightnessTemperature
+           channels: *abi_g16_channels
+         where:
+         - variable:
+             name: MetaData/cloudAmount
+           maxvalue: 30.
+         actions:
+         - name: set
+           flag: CloudFractionCheck
+           ignore: rejected observations
+         - name: reduce obs space
+         #- name: reject
+

@@ -1,0 +1,11 @@
+       # ------------------------------------
+       # Step 7 : Initial obs erro assignment
+       # -----------------------------------
+       - filter: Perform Action
+         filter variables:
+         - name: brightnessTemperature
+           channels: *abi_g18_channels
+         action:
+           name: assign error
+           error parameter vector: *abi_g18_error
+

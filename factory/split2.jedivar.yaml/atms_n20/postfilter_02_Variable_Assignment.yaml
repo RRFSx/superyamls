@@ -1,0 +1,7 @@
+       # Calculate symmetric retrieved CLW
+       - filter: Variable Assignment
+         assignments:
+         - name: CLWRetSymmetric@DerivedMetaData
+           type: float
+           value: 1000.0
+

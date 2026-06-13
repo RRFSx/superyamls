@@ -1,0 +1,23 @@
+       # --------------------------------------------------
+       # Step 14:  MinResidual Cloud Detection Check
+       # ---------------------------------------------------
+       - filter: Bounds Check
+         filter variables:
+         - name: brightnessTemperature
+           channels: *abi_g16_channels
+         test variables:
+         - name: ObsFunction/CloudDetectMinResidualIR
+           channels: *abi_g16_channels
+           options:
+             channels: *abi_g16_channels
+             use_flag: *abi_g16_use_flag
+             use_flag_clddet: *abi_g16_use_flag_clddet
+             obserr_dtempf: [0.5, 2.0, 4.0, 2.0, 4.0]
+             error parameter vector: *abi_g16_error
+         maxvalue: 1.0e-12
+         actions:
+           - name: set
+             flag: CloudDetectMinResidualIR
+             ignore: rejected observations
+           - name: reject
+

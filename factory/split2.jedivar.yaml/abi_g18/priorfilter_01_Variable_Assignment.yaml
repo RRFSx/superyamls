@@ -1,0 +1,39 @@
+       # --------------------------------------------------------
+       # Step 8 : Create surface flag assignment from Geovals
+       # water:0
+       # land: 1
+       # ice:  2
+       # Snow: 3
+       # Mixed/Other: 4.
+       # ----------------------------------------------------------
+       - filter: Variable Assignment
+         assignments:
+         - name: DerivedMetaData/surfaceFlag
+           type: int
+           function:
+             name: IntObsFunction/Conditional
+             options:
+               defaultvalue: 4
+               firstmatchingcase: true
+               cases:
+               - where:
+                 - variable:
+                     name: GeoVaLs/water_area_fraction
+                   minvalue: 0.99
+                 value: 0
+               - where:
+                 - variable:
+                     name: GeoVaLs/land_area_fraction
+                   minvalue: 0.99
+                 value: 1
+               - where:
+                 - variable:
+                     name: GeoVaLs/ice_area_fraction
+                   minvalue: 0.99
+                 value: 2
+               - where:
+                 - variable:
+                     name: GeoVaLs/surface_snow_area_fraction
+                   minvalue: 0.99
+                 value: 3
+

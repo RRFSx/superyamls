@@ -1,0 +1,17 @@
+       # -----------------------------------------------------------------------------------------------------------
+       # Step 10: Observation Error inflation: Topography Check (H> 2000m)
+       # Error Inflation Factor (EIF) as a function of terrain height, channel, and surface-to-space transmittance.
+       # -----------------------------------------------------------------------------------------------------------
+       - filter: Perform Action
+         filter variables:
+         - name: brightnessTemperature
+           channels: *cris-fsr_n21_channels
+         action:
+           name: inflate error
+           inflation variable:
+             name: ObsFunction/ObsErrorFactorTopoRad
+             channels: *cris-fsr_n21_channels
+             options:
+               sensor: cris-fsr_n21
+               channels: *cris-fsr_n21_channels
+

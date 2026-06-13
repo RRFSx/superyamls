@@ -1,0 +1,51 @@
+       # -----------------------------------------
+       # Step 0: Create Diagnostic Flags
+       # -------------------------------
+       - filter: Create Diagnostic Flags
+         filter variables:
+         - name: brightnessTemperature
+           channels: *abi_g18_channels
+         flags:
+         - name: ZenithAngleCheck
+           initial value: false
+           force reinitialization: false
+         - name: Thinning
+           initial value: false
+           force reinitialization: false
+         - name: GeoDomainCheck
+           initial value: false
+           force reinitialization: false
+         - name: CloudFractionCheck
+           initial value: false
+           force reinitialization: false
+         - name: CloudFractionCheck_channel_10
+           initial value: false
+           force reinitialization: false
+         - name: SplitWindowCheck_channel_10
+           initial value: false
+           force reinitialization: false
+         - name: ClearSkyStdCheck
+           initial value: false
+           force reinitialization: false
+         - name: ClearSkyStdCheck_channel_10
+           initial value: false
+           force reinitialization: false
+         - name: BTrangeCheck
+           initial value: false
+           force reinitialization: false
+         - name: CloudDetectMinResidualIR
+           initial value: false
+           force reinitialization: false
+         - name: SurfaceTempJacobianCheck
+           initial value: false
+           force reinitialization: false
+         - name: GrossCheck
+           initial value: false
+           force reinitialization: false
+         - name: NearSSTRetCheckIR
+           initial value: false
+           force reinitialization: false
+         - name: UseflagCheck
+           initial value: false
+           force reinitialization: false
+

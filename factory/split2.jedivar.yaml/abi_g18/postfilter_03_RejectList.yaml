@@ -1,0 +1,12 @@
+       # -------------------------------------------
+       # Setp 12b: Toss all channels data over snow
+       # --------------------------------------------
+       - filter: RejectList
+         filter variables:
+         - name: brightnessTemperature
+           channels: *abi_g18_channels
+         where:
+         - variable:
+             name: GeoVaLs/surface_snow_area_fraction
+           minvalue: 0.99
+

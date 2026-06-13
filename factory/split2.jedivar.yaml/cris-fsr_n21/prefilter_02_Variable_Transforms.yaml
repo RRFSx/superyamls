@@ -1,0 +1,16 @@
+       # --------------------------------------------------------
+       # Step 2: Transform radiance to brightness temperature
+       # --------------------------------------------------------
+       - filter: Variable Transforms
+         Transform: SatBrightnessTempFromRad
+         transform from:
+           name: ObsValue/radiance
+           channels: *cris-fsr_n21_channels
+         spectral variable:
+           name: MetaData/sensorCentralWavenumber
+           channels: *cris-fsr_n21_channels
+         radiance units: wavenumber
+         planck1: 1.191042953e-16
+         planck2: 1.4387774e-2
+         #SkipWhenNoObs: False
+

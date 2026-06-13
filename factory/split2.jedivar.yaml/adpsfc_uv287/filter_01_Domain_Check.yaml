@@ -1,0 +1,10 @@
+         # Time window filter
+         - filter: Domain Check
+           where:
+             - variable:
+                 name: MetaData/timeOffset # units: s
+               minvalue: -900
+               maxvalue:  900
+           action:
+             name: reduce obs space
+

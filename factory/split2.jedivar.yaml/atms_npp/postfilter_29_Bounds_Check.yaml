@@ -1,0 +1,19 @@
+       # Step 11: Inter-Channel Check
+       - filter: Bounds Check
+         filter variables:
+         - name: brightnessTemperature
+           channels: *atms_npp_channels
+         test variables:
+         - name: InterChannelConsistencyCheck@ObsFunction
+           channels: *atms_npp_channels
+           options:
+             channels: *atms_npp_channels
+             use passive_bc: true
+             sensor: atms_npp
+             use_flag: *atms_npp_use_flag
+         actions:
+           - name: set
+             flag: InterChannelConsistency
+             ignore: rejected observations
+           - name: reject
+

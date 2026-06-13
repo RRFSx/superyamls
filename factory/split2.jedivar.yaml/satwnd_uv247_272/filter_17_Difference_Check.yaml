@@ -1,0 +1,21 @@
+         # Reject obs within 110 mb of surface pressure over non-water surface
+         - filter: Difference Check
+           udescriptor: "difference_check_surface_pressure"
+           filter variables:
+           - name: windEastward
+           - name: windNorthward
+           where:
+           - variable:
+               name: GeoVaLs/water_area_fraction
+             maxvalue: 0.99
+           - variable:
+               name: ObsType/windEastward
+             is_in: 247
+           - variable: MetaData/satelliteIdentifier
+             is_in: 272
+           reference: GeoVaLs/air_pressure_at_surface
+           value: MetaData/pressure
+           maxvalue: -11000.                   # within 110 hPa above surface pressure, negative p-diff
+           action:
+             name: reject
+

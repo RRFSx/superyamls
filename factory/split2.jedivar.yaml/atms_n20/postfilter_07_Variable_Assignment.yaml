@@ -1,0 +1,18 @@
+       # Calculate Innovation@DerivedMetaData
+       - filter: Variable Assignment
+         assignments:
+         - name: Innovation@DerivedMetaData
+           channels: *atms_n20_channels
+           type: float
+           function:
+             name: ObsFunction/Arithmetic
+             channels: *atms_n20_channels
+             options:
+               variables:
+               - name: brightnessTemperature@ObsValue
+                 channels: *atms_n20_channels
+               - name: brightnessTemperature@HofX
+                 channels: *atms_n20_channels
+               coefs: [1, -1]
+
+        # Toss the data if the hofx is missing or outside of range

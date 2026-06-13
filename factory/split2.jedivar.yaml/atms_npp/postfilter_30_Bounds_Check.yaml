@@ -1,0 +1,17 @@
+       # Step 12: Useflag Check
+       - filter: Bounds Check
+         filter variables:
+         - name: brightnessTemperature
+           channels: *atms_npp_channels
+         test variables:
+         - name: ObsFunction/ChannelUseflagCheckRad
+           channels: *atms_npp_channels
+           options:
+             channels: *atms_npp_channels
+             use_flag: *atms_npp_use_flag
+         minvalue: 1.0e-12
+         actions:
+           - name: set
+             flag: UseflagCheck
+             ignore: rejected observations
+           - name: reject

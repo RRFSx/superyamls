@@ -1,0 +1,18 @@
+       # -------------------------------------------------------------------------------------------------------------
+       # Step 16: Observation Error inflation: adjust error for channels 8-10 according to ch8 BT standard deviation
+       # --------------------------------------------------------------------------------------------------------------
+       - filter: Perform Action
+         filter variables:
+         - name: brightnessTemperature
+           channels: 8-10
+         where:
+         - variable:
+             name: ClearSkyStdDev/brightnessTemperature
+             channels: 8
+           maxvalue: 0.5
+           minvalue: 0.4
+           min_exclusive: true
+         action:
+           name: inflate error
+           inflation factor: 1.1489
+

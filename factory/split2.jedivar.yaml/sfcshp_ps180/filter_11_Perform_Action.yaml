@@ -1,0 +1,17 @@
+         # Set ObsError set "error parameter" if < "max value"
+         - filter: Perform Action
+           apply at iterations: 0,1
+           filter variables:
+           - name: stationPressure
+           action:
+             name: assign error
+             error parameter: 100.0
+           where:
+           - variable:
+               name: ObsErrorData/stationPressure
+             maxvalue: 100.0
+           - variable:
+               name: ObsErrorData/stationPressure
+             value: is_valid
+           defer to post: true
+

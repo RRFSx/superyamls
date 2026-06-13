@@ -1,0 +1,21 @@
+       # Calculate CLW obs/bkg match index
+       - filter: Variable Assignment
+         assignments:
+         - name: CLWMatchIndex@DerivedMetaData
+           channels: *atms_npp_channels
+           type: float
+           function:
+             name: CLWMatchIndexMW@ObsFunction
+             channels: *atms_npp_channels
+             options:
+               channels: *atms_npp_channels
+               clwobs_function:
+                 name: CLWRetFromObs@DerivedMetaData
+               clwbkg_function:
+                 name: CLWRetFromBkg@DerivedMetaData
+               clwret_clearsky: [ 0.030,  0.030,  0.030,  0.020,  0.030,
+                                  0.080,  0.150,  0.000,  0.000,  0.000,
+                                  0.000,  0.000,  0.000,  0.000,  0.000,
+                                  0.020,  0.030,  0.030,  0.030,  0.030,
+                                  0.050,  0.100]
+

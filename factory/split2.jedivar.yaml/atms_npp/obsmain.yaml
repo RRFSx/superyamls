@@ -1,0 +1,88 @@
+     - obs space:
+         name: atms_npp
+         _anchor_channels: &atms_npp_channels 1-22
+         _anchor_use_flag: &atms_npp_use_flag
+             [ 1,  1,  1,  1,  1,
+               1,  1,  1,  1,  1,
+               1,  1,  1, -1, -1,
+               1,  1,  1,  1,  1,
+               1,  1]
+         _anchor_error: &atms_npp_error [
+             4.500,  4.500,  4.500,  2.500,  0.550,
+             0.300,  0.300,  0.400,  0.400,  0.400,
+             0.450,  0.450,  0.550,  0.800,  4.000,
+             4.000,  4.000,  3.500,  3.000,  3.000,
+             3.000,  3.000]
+         _anchor_obserr_bound_max: &atms_npp_obserr_bound_max
+             [4.5, 4.5, 3.0, 3.0, 1.0,
+              1.0, 1.0, 1.0, 1.0, 1.0,
+              1.0, 1.0, 1.0, 2.0, 4.5,
+              4.5, 2.0, 2.0, 2.0, 2.0,
+              2.0, 2.0]
+         distribution:
+           name: "RoundRobin"
+           halo size: 500e3
+         obsdatain:
+           engine:
+             type: H5File
+             obsfile: "data/obs/ioda_atms_npp.nc"
+             missing file action: "warn"
+         obsdataout:
+           empty obs space action: "@emptyObsSpaceAction@"
+           engine:
+             type: H5File
+             obsfile: jdiag_atms_npp.nc
+         simulated variables: [brightnessTemperature]
+         observed variables: [brightnessTemperature]
+         channels: *atms_npp_channels
+       obs operator:
+           name: CRTM
+           Absorbers: [H2O,O3,CO2]
+           Clouds: [Water, Ice]
+           Cloud_Fraction: 1.0
+           Cloud_Seeding: true
+           SurfaceWindGeoVars: uv
+           obs options:
+             Sensor_ID: atms_npp
+             EndianType: little_endian
+             CoefficientPath: data/crtm/
+             IRVISlandCoeff: IGBP
+           linear obs operator:
+             Absorbers: [H2O, O3]
+       obs localizations:
+         - localization method: Horizontal Gaspari-Cohn
+           lengthscale: 200e3 # orig
+
+       obs bias:
+         input file:  data/satbias_in/atms_npp.satbias.nc
+         output file: data/satbias_out/atms_npp.satbias.nc
+         variational bc:
+           predictors:
+           - name: constant
+           - name: lapseRate
+             order: 2
+             tlapse: &atms_npp_tlapse  data/satbias_in/atms_npp.tlapse.txt
+           - name: lapseRate
+             tlapse: *atms_npp_tlapse
+           - name: emissivityJacobian
+           - name: sensorScanAngle
+             order: 4
+           - name: sensorScanAngle
+             order: 3
+           - name: sensorScanAngle
+             order: 2
+           - name: sensorScanAngle
+         covariance:
+           minimal required obs number: 20
+           variance range: [1.0e-6, 10.0]
+           step size: 1.0e-4
+           largest analysis variance: 10000.0
+           prior:
+             input file: data/satbias_in/atms_npp.satbias_cov.nc
+             inflation:
+               ratio: 1.1
+               ratio for small dataset: 2.0
+           output file: data/satbias_out/atms_npp.satbias_cov.nc
+
+       obs pre filters:
+       obs post filters:

@@ -1,0 +1,20 @@
+       # ---------------------------------------------------------------------------------------------------------------------
+       # Step 15: Second StdDev check: Scene Consistency Check based on StdDev of ch13 (10.8 micron) for chanenel 7, 10-16
+       # This step would remove more data for channel 10
+       # ---------------------------------------------------------------------------------------------------------------------
+       - filter: Domain Check
+         filter variables:
+         - name: brightnessTemperature
+           channels: 7, 10-16
+         where:
+         - variable:
+             name: ClearSkyStdDev/brightnessTemperature
+             channels: 13
+           maxvalue: 0.5
+           max_exclusive: true
+         actions:
+           - name: set
+             flag: ClearSkyStdCheck_channel_10
+             ignore: rejected observations
+           - name: reject
+

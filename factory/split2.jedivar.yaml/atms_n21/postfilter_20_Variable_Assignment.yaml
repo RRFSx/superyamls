@@ -1,0 +1,12 @@
+       # Step 7: Obs Error Inflation based on TOA Transmittancec Check
+       - filter: Variable Assignment
+         assignments:
+         - name: ObsErrorFactorTransmitTop@DerivedMetaData
+           channels: *atms_n21_channels
+           type: float
+           function:
+             name: ObsErrorFactorTransmitTopRad@ObsFunction
+             channels: *atms_n21_channels
+             options:
+               channels: *atms_n21_channels
+

@@ -1,0 +1,12 @@
+         # Assign abs(windNorthward)
+         - filter: Variable Assignment
+           assignments:
+           - name: AbsObsValue/windNorthward
+             type: float
+             function:
+               name: ObsFunction/Arithmetic
+               options:
+                 variables:
+                 - name: ObsValue/windNorthward
+                 absolute value: [true]
+

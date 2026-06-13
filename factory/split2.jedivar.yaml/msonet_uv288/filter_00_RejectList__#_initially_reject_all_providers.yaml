@@ -1,0 +1,5 @@
+         # ------------------
+         # wind (288)
+         # ------------------
+         # Mesonet winds provider/station use lists
+         - filter: RejectList  # initially reject all providers

@@ -1,0 +1,12 @@
+       # ---------------------------------------------------------------------------------
+       # Step 12c: Toss all channels data over ice (reject if ice_area_fraction>=0.99)
+       # ---------------------------------------------------------------------------------
+       - filter: RejectList
+         filter variables:
+         - name: brightnessTemperature
+           channels: *abi_g16_channels
+         where:
+         - variable:
+             name: GeoVaLs/ice_area_fraction
+           minvalue: 0.99
+

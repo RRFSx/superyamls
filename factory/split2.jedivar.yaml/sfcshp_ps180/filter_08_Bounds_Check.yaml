@@ -1,0 +1,11 @@
+         # Bounds Check (ObsError)
+         - filter: Bounds Check
+           filter variables:
+           - name: stationPressure
+           test variables:
+           - name:  ObsErrorData/stationPressure
+           minvalue: 0.0
+           maxvalue: 1000
+           action:
+             name: reduce obs space
+

@@ -1,0 +1,13 @@
+       # Step 6: Observation Error Inflation based on Topography Check
+       - filter: Variable Assignment
+         assignments:
+         - name: ObsErrorFactorTopo@DerivedMetaData
+           channels: *atms_n20_channels
+           type: float
+           function:
+             name: ObsErrorFactorTopoRad@ObsFunction
+             channels: *atms_n20_channels
+             options:
+               sensor: atms_n20
+               channels: *atms_n20_channels
+

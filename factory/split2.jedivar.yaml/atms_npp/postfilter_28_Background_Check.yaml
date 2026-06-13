@@ -1,0 +1,13 @@
+       - filter: Background Check
+         filter variables:
+         - name: brightnessTemperature
+           channels: *atms_npp_channels
+         function absolute threshold:
+         - name: ObsErrorBound@DerivedMetaData
+           channels: *atms_npp_channels
+         actions:
+           - name: set
+             flag: GrossCheck
+             ignore: rejected observations
+           - name: reject
+

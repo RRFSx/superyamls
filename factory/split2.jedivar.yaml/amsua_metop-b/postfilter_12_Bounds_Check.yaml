@@ -1,0 +1,15 @@
+       #  Inter-channel check
+       - filter: Bounds Check
+         filter variables:
+         - name: brightnessTemperature
+           channels: *amsua_metop-b_channels
+         test variables:
+         - name: ObsFunction/InterChannelConsistencyCheck
+           channels: *amsua_metop-b_channels
+           options:
+             channels: *amsua_metop-b_channels
+             sensor: amsua_metop-b
+             use_flag: *amsua_metop-b_use_flag
+         maxvalue: 1.0e-12
+         action:
+           name: reject

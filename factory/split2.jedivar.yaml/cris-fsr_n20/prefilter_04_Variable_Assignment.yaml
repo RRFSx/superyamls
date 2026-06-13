@@ -1,0 +1,31 @@
+       # ----------------------------------
+       # Step 4: Create cloudFree variable
+       # ----------------------------------
+       - filter: Variable Assignment
+         assignments:
+         - name: DerivedMetaData/cloudFree
+           type: int
+           function:
+             name: IntObsFunction/Arithmetic
+             options:
+               variables:
+               - name: MetaData/cloudCoverTotal
+               coefs: [-1]
+               intercept: 100
+
+       # Step 4: Remove Observations from the Edge of the Scan
+       # sensorscan less than 5 or larger than 56 are removed
+       #- filter: Domain Check
+       #  filter variables:
+       #  - name: brightnessTemperature
+       #    channels: *cris-fsr_n20_channels
+       #  where:
+       #  - variable:
+       #      name: MetaData/sensorScanPosition
+       #    is_in: 5-56
+       #  actions:
+       #  - name: set
+       #    flag: ScanEdgeRemoval
+       #  - name: reject
+       #    #- name: reduce obs space
+

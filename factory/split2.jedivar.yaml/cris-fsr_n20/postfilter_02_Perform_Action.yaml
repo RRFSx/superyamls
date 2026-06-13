@@ -1,0 +1,18 @@
+       # -----------------------------------------------------------------------------------------------------------------------------------------------
+       # Step 9: Observation Error Inflation: based on Wavenumber/solza/water_fac
+       # Error Inflation Factor (EIF) for channels with wavenumber in the range of [2000, 2400] cm-1 during daytime (sun zenith angle < 89) and containing
+       # water fraction in the filed of view
+       # Note, currenlty, CrIS wavenumber > 2000 are not assimilated, this is for future refernce (i.e., CrIS short-wave DA etc.)
+       # -----------------------------------------------------------------------------------------------------------------------------------------------
+       - filter: Perform Action
+         filter variables:
+         - name: brightnessTemperature
+           channels: *cris-fsr_n20_channels
+         action:
+           name: inflate error
+           inflation variable:
+             name: ObsFunction/ObsErrorFactorWavenumIR
+             channels: *cris-fsr_n20_channels
+             options:
+               channels: *cris-fsr_n20_channels
+

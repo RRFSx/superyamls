@@ -1,0 +1,19 @@
+       # ----------------------------------------------------------------------------------------------------------
+       # Step 19: additional cloud fraction check for channels 7, 10-16
+       # remove when cloud fraction > 2
+       # this step would remove more data from channel 8
+       # -----------------------------------------------------------------------------------------------------------
+       - filter: Domain Check
+         filter variables:
+         - name: brightnessTemperature
+           channels: 7, 10-16
+         where:
+         - variable:
+             name: MetaData/cloudAmount
+           maxvalue: 2
+         actions:
+         - name: set
+           flag: CloudFractionCheck_channel_10
+           ignore: rejected observations
+         - name: reject
+

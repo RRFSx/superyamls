@@ -1,0 +1,17 @@
+       # Calculate Innovation@DerivedMetaData
+       - filter: Variable Assignment
+         assignments:
+         - name: Innovation@DerivedMetaData
+           channels: *atms_npp_channels
+           type: float
+           function:
+             name: ObsFunction/Arithmetic
+             channels: *atms_npp_channels
+             options:
+               variables:
+               - name: brightnessTemperature@ObsValue
+                 channels: *atms_npp_channels
+               - name: brightnessTemperature@HofX
+                 channels: *atms_npp_channels
+               coefs: [1, -1]
+

@@ -1,0 +1,13 @@
+       # -----------------------------------------------------
+       # Step 12 :  Surface type check
+       # Step 12a: Toss all channels 7, 11-16  data over land
+       # ------------------------------------------------------
+       - filter: RejectList
+         filter variables:
+         - name: brightnessTemperature
+           channels: 7, 11-16
+         where:
+         - variable:
+             name: GeoVaLs/land_area_fraction
+           minvalue: 0.99
+

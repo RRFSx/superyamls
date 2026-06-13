@@ -1,0 +1,26 @@
+       # ----------------------------------------------------------------------------------------------------------
+       # Step 20: split window check for channels 7, 10-16
+       # Step 20a: Variable assignment, OmF non bias corrected
+       # -----------------------------------------------------------------------------------------------------------
+       - filter: Variable Assignment
+         assignments:
+         - name: DerivedMetaData/OmFNBC
+           type: float
+           function:
+             name: ObsFunction/Arithmetic
+             options:
+               variables:
+               - name: brightnessTemperature@ObsValue
+                 channels: 13
+               - name: brightnessTemperature@HofX
+                 channels: 13
+               - name: brightnessTemperature@ObsBiasData
+                 channels: 13
+               - name: brightnessTemperature@ObsValue
+                 channels: 14
+               - name: brightnessTemperature@HofX
+                 channels: 14
+               - name: brightnessTemperature@ObsBiasData
+                 channels: 14
+               coefs: [1, -1, 1, -1, 1, -1]
+
