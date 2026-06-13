@@ -1,0 +1,12 @@
+       # ----------------------------------
+       # Step 3: Assign Observation Error
+       # ----------------------------------
+       - filter: Perform Action
+         filter variables:
+         - name: brightnessTemperature
+           channels: *cris-fsr_n20_channels
+           sensor: cris-fsr_n20
+         action:
+           name: assign error
+           error parameter vector: *cris-fsr_n20_error
+

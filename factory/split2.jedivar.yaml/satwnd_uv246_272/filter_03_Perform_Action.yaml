@@ -1,0 +1,18 @@
+         # Error inflation (windEastward) based on pressure check (setupw.f90)
+         - filter: Perform Action
+           udescriptor: "error_inflation_pressure_check"
+           filter variables:
+           - name: windEastward
+           where:
+           - variable: ObsType/windEastward
+             is_in: 246
+           - variable: MetaData/satelliteIdentifier
+             is_in: 272
+           action:
+             name: inflate error
+             inflation variable:
+               name: ObsFunction/ObsErrorFactorPressureCheck
+               options:
+                 variable: windEastward
+                 inflation factor: 4.0
+

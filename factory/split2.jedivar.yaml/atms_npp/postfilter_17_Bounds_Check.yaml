@@ -1,0 +1,14 @@
+       - filter: Bounds Check
+         filter variables:
+         - name: brightnessTemperature
+           channels: *atms_npp_channels
+         test variables:
+         - name: DerivedMetaData/HydrometeorCheckATMS
+           channels: *atms_npp_channels
+         maxvalue: 0.0
+         actions:
+           - name: set
+             flag: HydrometeorCheck
+             ignore: rejected observations
+           - name: reject
+

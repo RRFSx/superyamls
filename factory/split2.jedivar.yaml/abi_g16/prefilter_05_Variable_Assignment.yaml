@@ -1,0 +1,18 @@
+       # ---------------------------------------------------------------------------------------------------
+       # Step 5 : Create a variable of thinning priority based on cloudFree and StdDev from ABI channel 13
+       # ----------------------------------------------------------------------------------------------------
+       - filter: Variable Assignment
+         assignments:
+         - name: DerivedMetaData/thinning_priority
+           type: float
+           function:
+             name: ObsFunction/LinearCombination
+             options:
+               variables:
+               - name: MetaData/cloudFree
+               - name: ClearSkyStdDev/brightnessTemperature
+                 channels: 13
+               coefficients: [0.1, -10.0]
+               #coefficients: [10, -1.0]
+               constant_term: 100.0
+

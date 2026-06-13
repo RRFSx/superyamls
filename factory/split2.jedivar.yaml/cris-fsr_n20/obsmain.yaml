@@ -1,0 +1,90 @@
+     - obs space:
+         name: cris-fsr_n20
+         _anchor_channels: &cris-fsr_n20_channels 1
+         _anchor_use_flag: &cris-fsr_n20_use_flag [1]
+         _anchor_use_flag_clddet: &cris-fsr_n20_use_flag_clddet [1]
+         _anchor_error: &cris-fsr_n20_error [1]
+         _anchor_obserr_bound_max: &cris-fsr_n20_obserr_bound_max [1]
+         distribution:
+           name: "RoundRobin"
+           halo size: 100e3
+         obsdatain:
+           engine:
+             type: H5File
+             obsfile: data/obs/ioda_crisf4_n20.nc
+             missing file action: "warn"
+         obsdataout:
+           empty obs space action: "@emptyObsSpaceAction@"
+           engine:
+             type: H5File
+             obsfile: jdiag_cris-fsr_n20.nc
+         io pool:
+           max pool size: 1
+         observed variables: [radiance]
+         simulated variables: [brightnessTemperature]
+         derived variables: [brightnessTemperature]
+         channels: *cris-fsr_n20_channels
+
+       # --------------------
+       # Observation Operator
+       # --------------------
+       obs operator:
+         name: CRTM
+         Absorbers: [H2O,O3,CO2]
+         SurfaceWindGeoVars: uv
+         obs options:
+           Sensor_ID: cris-fsr_n20
+           EndianType: little_endian
+           CoefficientPath: data/crtm/
+           IRwaterCoeff: Nalli
+           IRVISlandCoeff: IGBP
+           IRVISsnowCoeff: NPOESS
+           IRVISiceCoeff: NPOESS
+         linear obs operator:
+           Absorbers: [H2O, O3]
+       obs localizations:
+         - localization method: Horizontal Gaspari-Cohn
+           lengthscale: 300e3 # orig
+
+      # ------------------------------------
+      # Observation Bias Correction (VarBC)
+      # ------------------------------------
+       obs bias:
+         input file: data/satbias_in/cris-fsr_n20.satbias.nc
+         output file: data/satbias_out/cris-fsr_n20.satbias.nc
+         variational bc:
+           predictors:
+           - name: constant
+           - name: lapseRate
+             order: 2
+             tlapse: &cris-fsr_n20_tlapse  data/satbias_in/cris-fsr_n20.tlapse.txt
+           - name: lapseRate
+             tlapse: *cris-fsr_n20_tlapse
+           - name: emissivityJacobian
+           - name: sensorScanAngle
+             order: 4
+           - name: sensorScanAngle
+             order: 3
+           - name: sensorScanAngle
+             order: 2
+           - name: sensorScanAngle
+         covariance:
+           minimal required obs number: 20
+           variance range: [1.0e-6, 10.0]
+           step size: 1.0e-4
+           largest analysis variance: 10000.0
+           prior:
+             input file: data/satbias_in/cris-fsr_n20.satbias_cov.nc
+             inflation:
+               ratio: 1.1
+               ratio for small dataset: 2.0
+           output file: data/satbias_out/cris-fsr_n20.satbias_cov.nc
+
+       # -----------------------------------------
+       # Observation Pre Filters (QC): steps 0-6
+       # -----------------------------------------
+       obs pre filters:
+       # ---------------------------------------
+       # Observation post Filters (steps 7-17)
+       # ----------------------------------------
+       obs post filters:

@@ -1,0 +1,41 @@
+     - obs space:
+         name: msonet_ps188
+         distribution:
+           name: "RoundRobin"
+           halo size: 500e3
+         obsdatain:
+           engine:
+             type: H5File
+             obsfile: "data/obs/ioda_msonet.nc"
+             missing file action: "warn"
+           obsgrouping:
+             group variables: ["stationIdentification"]
+             sort variable: "pressure"
+             sort order: "descending"
+         obsdataout:
+           empty obs space action: "@emptyObsSpaceAction@"
+           engine:
+             type: H5File
+             obsfile: jdiag_msonet_ps188.nc
+             allow overwrite: true
+         io pool:
+           max pool size: 1
+         observed variables: [stationPressure]
+         simulated variables: [stationPressure]
+
+       obs operator:
+         name: SfcPCorrected
+         da_psfc_scheme: GSI
+         geovar_sfc_geomz: geopotential_height_at_surface
+         geovar_geomz: geopotential_height
+       linear obs operator:
+         name: Identity
+
+       obs error:
+         covariance model: diagonal
+
+       obs localizations:
+         - localization method: Horizontal Gaspari-Cohn
+           lengthscale: 200e3 # orig
+
+       obs filters:

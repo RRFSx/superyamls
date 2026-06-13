@@ -1,0 +1,53 @@
+       #  Gross check
+       - filter: Background Check
+         filter variables:
+         - name: brightnessTemperature
+           channels: *amsua_metop-b_channels
+         function absolute threshold:
+         - name: ObsFunction/ObsErrorBoundMW
+           channels: *amsua_metop-b_channels
+           options:
+             sensor: amsua_metop-b
+             channels: *amsua_metop-b_channels
+             obserr_bound_latitude:
+               name: ObsFunction/ObsErrorFactorLatRad
+               options:
+                 latitude_parameters: [25.0, 0.25, 0.04, 3.0]
+             obserr_bound_transmittop:
+               name: ObsFunction/ObsErrorFactorTransmitTopRad
+               channels: *amsua_metop-b_channels
+               options:
+                 channels: *amsua_metop-b_channels
+             obserr_bound_topo:
+               name: ObsFunction/ObsErrorFactorTopoRad
+               channels: *amsua_metop-b_channels
+               options:
+                 channels: *amsua_metop-b_channels
+                 sensor: amsua_metop-b
+             obserr_function:
+               name: ObsFunction/ObsErrorModelRamp
+               channels: *amsua_metop-b_channels
+               options:
+                 channels: *amsua_metop-b_channels
+                 xvar:
+                   name: ObsFunction/CLWRetSymmetricMW
+                   options:
+                     clwret_ch238: 1
+                     clwret_ch314: 2
+                     clwret_types: [ObsValue, HofX]
+                     bias_application: HofX
+                 x0:    [ 0.050,  0.030,  0.030,  0.020,  0.000,
+                          0.100,  0.000,  0.000,  0.000,  0.000,
+                          0.000,  0.000,  0.000,  0.000,  0.030]
+                 x1:    [ 0.600,  0.450,  0.400,  0.450,  1.000,
+                          1.500,  0.000,  0.000,  0.000,  0.000,
+                          0.000,  0.000,  0.000,  0.000,  0.200]
+                 err0:  [ 2.500,  2.200,  2.000,  0.550,  0.300,
+                          0.230,  0.230,  0.250,  0.250,  0.350,
+                          0.400,  0.550,  0.800,  3.000,  3.500]
+                 err1:  [20.000, 18.000, 12.000,  3.000,  0.500,
+                          0.300,  0.230,  0.250,  0.250,  0.350,
+                          0.400,  0.550,  0.800,  3.000, 18.000]
+             obserr_bound_max: *amsua_metop-b_obserr_bound_max
+         action:
+           name: reject

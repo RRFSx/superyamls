@@ -1,0 +1,31 @@
+       # ----------------------------------
+       # Step 21: Gross check
+       # ----------------------------------
+       - filter: Background Check
+         filter variables:
+         - name: brightnessTemperature
+           channels: *abi_g18_channels
+         function absolute threshold:
+         - name: ObsFunction/ObsErrorBoundIR
+           channels: *abi_g18_channels
+           options:
+             sensor: abi_g18
+             channels: *abi_g18_channels
+             obserr_bound_latitude:
+               name: ObsFunction/ObsErrorFactorLatRad
+               options:
+                 #latitude_parameters: [0.0, 0.0, 0.0, 0.0]
+                 latitude_parameters: [25.0, 0.5, 0.04, 1.0]
+             obserr_bound_transmittop:
+               name: ObsFunction/ObsErrorFactorTransmitTopRad
+               channels: *abi_g18_channels
+               options:
+                 channels: *abi_g18_channels
+             obserr_bound_max: *abi_g18_obserr_bound_max
+             error parameter vector: *abi_g18_error
+         actions:
+           - name: set
+             flag: GrossCheck
+             ignore: rejected observations
+           - name: reject
+

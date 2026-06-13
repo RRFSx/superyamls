@@ -1,0 +1,48 @@
+     - obs space:
+         name: adpsfc_t187
+         distribution:
+           name: "RoundRobin"
+           halo size: 500e3
+         obsdatain:
+           engine:
+             type: H5File
+             obsfile: "data/obs/ioda_adpsfc.nc"
+             missing file action: "warn"
+           obsgrouping:
+             group variables: ["stationIdentification"]
+             sort variable: "pressure"
+             sort order: "descending"
+         obsdataout:
+           empty obs space action: "@emptyObsSpaceAction@"
+           engine:
+             type: H5File
+             obsfile: jdiag_adpsfc_t187.nc
+             allow overwrite: true
+         io pool:
+           max pool size: 1
+         observed variables: [airTemperature]
+         simulated variables: [airTemperature]
+
+       obs operator:
+         name: SfcCorrected
+         correction scheme to use: GSL
+         gsl parameters:
+           temperature lapse rate option: Local
+           temperature local lapse rate level: 10
+           temperature lapse rate threshold: true
+           min threshold: 0.5
+           max threshold: 10.0
+         variables:
+         - name: airTemperature
+
+       linear obs operator:
+         name: Identity
+
+       obs error:
+         covariance model: diagonal
+
+       obs localizations:
+         - localization method: Horizontal Gaspari-Cohn
+           lengthscale: 200e3 # orig
+
+       obs filters:

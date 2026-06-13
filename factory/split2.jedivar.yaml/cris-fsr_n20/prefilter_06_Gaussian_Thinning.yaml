@@ -1,0 +1,18 @@
+       # -----------------------
+       # Step 6: Data Thinning
+       # ------------------------
+       - filter: Gaussian Thinning
+         filter variables:
+         - name: brightnessTemperature
+           channels: *cris-fsr_n20_channels
+         horizontal_mesh: 60
+         use_reduced_horizontal_grid: true
+         distance_norm: geodesic
+         #priority_variable: MetaData/cloudFree
+         #  round_horizontal_bin_count_to_nearest: true
+         #  partition_longitude_bins_using_mesh: true
+         actions:
+         - name: set
+           flag: Thinning
+         - name: reduce obs space
+

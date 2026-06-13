@@ -1,0 +1,17 @@
+         # Reject any observation within 100 mb of the surface pressure
+         - filter: Difference Check
+           udescriptor: "difference_check_air_pressure_at_surface"
+           filter variables:
+           - name: windEastward
+           - name: windNorthward
+           reference: GeoVaLs/air_pressure_at_surface
+           value: MetaData/pressure
+           maxvalue: -10000.  # within 100 hPa above surface pressure, negative p-diff
+           where:
+           - variable: ObsType/windEastward
+             is_in: 246
+           - variable: MetaData/satelliteIdentifier
+             is_in: 272
+           action:
+             name: reject
+

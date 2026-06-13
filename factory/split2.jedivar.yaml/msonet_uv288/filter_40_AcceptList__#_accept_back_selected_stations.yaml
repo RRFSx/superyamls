@@ -1,0 +1,6 @@
+         - filter: AcceptList  # accept back selected stations
+           where:
+           - variable: MetaData/dataProviderOrigin
+             is_in: ["VTDOT"]
+           - variable: MetaData/stationIdentification
+             is_in: ["VT002","VT001"]

@@ -1,0 +1,22 @@
+       # --------------------------------------------------------------------------------------------------------------
+       # Step 3 : Initial StdDev check: reject observations for all chennales when SDTB > 1.3 from channels 8/9/10 (or)
+       #          This initial stdDev check is applied to all 10 channels based on SDTB from channel 8 or 9 or 10
+       #          max_exclusive is false (default) sincce STDB=1.3 will not be removed
+       # ---------------------------------------------------------------------------------------------------------------
+       - filter: Bounds Check
+         filter variables:
+         - name: brightnessTemperature
+           channels: *abi_g16_channels
+         test variables:
+         - name: ClearSkyStdDev/brightnessTemperature
+           channels: 8-10
+         flag all filter variables if any test variable is out of bounds: true
+         maxvalue: 1.3
+         #max_exclusive: true
+         actions:
+           - name: set
+             flag: ClearSkyStdCheck
+             ignore: rejected observations
+           #- name: reject
+           - name: reduce obs space
+

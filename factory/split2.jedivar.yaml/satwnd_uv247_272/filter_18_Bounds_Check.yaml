@@ -1,0 +1,17 @@
+         # Reject when difference of wind direction between obs and background is more than 50 degrees
+         - filter: Bounds Check
+           udescriptor: "wind_direction_check"
+           filter variables:
+           - name: windEastward
+           - name: windNorthward
+           test variables:
+           - name: ObsFunction/WindDirAngleDiff
+           where:
+           - variable: ObsType/windEastward
+             is_in: 247
+           - variable: MetaData/satelliteIdentifier
+             is_in: 272
+           maxvalue: 50.
+           action:
+             name: reject
+

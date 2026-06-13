@@ -1,0 +1,12 @@
+         # Reject when pressure is less than 400 mb.
+         - filter: Bounds Check
+           apply at iterations: 0,1
+           filter variables:
+           - name: windEastward
+           - name: windNorthward
+           test variables:
+           - name: MetaData/pressure
+           minvalue: 40000
+           action:
+             name: reject
+

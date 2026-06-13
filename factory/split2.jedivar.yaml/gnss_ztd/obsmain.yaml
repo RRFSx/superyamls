@@ -1,0 +1,42 @@
+     - obs space:
+         name: gnss_ztd
+
+         distribution:   # for LETKF
+           name: "RoundRobin"
+           halo size: 500e3
+
+         obsdatain:
+           engine:
+             type: H5File
+             obsfile: "data/obs/ioda_gnss_ztd.nc"
+             missing file action: "warn"
+
+         obsgrouping:
+           group variables: ["stationIdentification"]
+           sort variable: "pressure"
+           sort order: "descending"
+         obsdataout:
+           empty obs space action: "@emptyObsSpaceAction@"
+           engine:
+             type: H5File
+             obsfile: jdiag_gnss_ztd.nc
+             allow overwrite: true
+         io pool:
+           max pool size: 1
+         simulated variables: [zenithTotalDelay]
+         observed variables: [zenithTotalDelay]
+
+       obs operator:
+         name: GroundgnssMetOffice
+       linear obs operator:
+         name: GroundgnssMetOffice
+         observation alias file: obsop_name_map.yaml
+
+       obs error:
+         covariance model: diagonal
+
+       obs localizations:   # for LETKF
+         - localization method: Horizontal Gaspari-Cohn
+           lengthscale: 200e3
+
+       obs filters:

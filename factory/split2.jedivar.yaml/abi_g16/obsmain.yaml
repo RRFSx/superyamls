@@ -1,0 +1,98 @@
+  # Observation Space (I/O)
+  # -----------------------
+     - obs space:
+         name: abi_g16
+         _anchor_channels: &abi_g16_channels 7-16
+         _anchor_use_flag: &abi_g16_use_flag [-1, 1, 1, 1, -1, -1, -1, -1, -1, -1]
+         _anchor_use_flag_clddet: &abi_g16_use_flag_clddet [-2, -2, -2, -2, -2, -2, -2, -2, -2, -2]
+         _anchor_error: &abi_g16_error [ 2.2, 1.756, 1.587, 1.185, 2.2, 2.2, 2.2, 2.2, 2.2, 2.2 ]
+         _anchor_obserr_bound_max: &abi_g16_obserr_bound_max [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]
+         distribution:
+           name: "RoundRobin"
+           halo size: 500e3
+         obsdatain:
+           engine:
+             type: H5File
+             obsfile: "data/obs/ioda_abi_g16.nc"
+             missing file action: "warn"
+         obsdataout:
+           empty obs space action: "@emptyObsSpaceAction@"
+           engine:
+             type: H5File
+             obsfile: jdiag_abi_g16.nc
+         io pool:
+           max pool size: 1
+         simulated variables: [brightnessTemperature]
+         observed variables: [brightnessTemperature]
+         channels: *abi_g16_channels
+
+  # Observation Operator
+  # --------------------
+       obs operator:
+         name: CRTM
+         Absorbers: [H2O, O3, CO2]
+         #Clouds: [Water, Ice]
+         #Cloud_Fraction: 1.0
+         SurfaceWindGeoVars: uv
+         obs options:
+           Sensor_ID:  abi_g16
+           EndianType: little_endian
+           CoefficientPath: data/crtm/
+           IRVISlandCoeff: IGBP
+         linear obs operator:
+           Absorbers: [H2O, O3]
+       obs localizations:
+         - localization method: Horizontal Gaspari-Cohn
+           lengthscale: 200e3 # orig
+
+  # Observation Bias Correction (VarBC)
+  # -----------------------------------
+       obs bias:
+         input file: data/satbias_in/abi_g16.satbias.nc
+         output file: data/satbias_out/abi_g16.satbias.nc
+         variational bc:
+           predictors:
+           - name: constant
+           - name: lapseRate
+             order: 2
+             tlapse: &abi_g16_tlapse data/satbias_in/abi_g16.tlapse.txt
+           - name: lapseRate
+             tlapse: *abi_g16_tlapse
+           - name: emissivityJacobian
+           - name: sensorScanAngle
+             var_name: sensorScanPosition
+             order: 4
+           - name: sensorScanAngle
+             var_name: sensorScanPosition
+             order: 3
+           - name: sensorScanAngle
+             var_name: sensorScanPosition
+             order: 2
+           - name: sensorScanAngle
+             var_name: sensorScanPosition
+         covariance:
+           minimal required obs number: 20
+           variance range: [1.0e-6, 10.0]
+           step size: 1.0e-4
+           largest analysis variance: 10000.0
+           prior:
+             input file: data/satbias_in/abi_g16.satbias_cov.nc
+             inflation:
+               ratio: 1.1
+               ratio for small dataset: 2.0
+           output file: data/satbias_out/abi_g16.satbias_cov.nc
+
+       # ----------------------------------------
+       # Observation Filters g16 (QC)
+       # ----------------------------------------
+       # Observation Pre Filters (QC): steps 0-6
+       # -----------------------------------------
+       obs pre filters:
+       # ---------------------------------------
+       # Observation prior Filters (steps 7-9)
+       # ----------------------------------------
+       obs prior filters:
+       # ----------------------------------------
+       # Observation post Filters (steps 10-20)
+       # ----------------------------------------
+       obs post filters:

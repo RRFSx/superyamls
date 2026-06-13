@@ -1,0 +1,35 @@
+       # --------------------------------------------------------
+       # Step 9: Surface Parameter assignment from geovals
+       # ----------------------------------------------------------
+       - filter: Variable Assignment
+         assignments:
+         - name: DerivedMetaData/surfaceParam
+           type: int
+           function:
+             name: IntObsFunction/Conditional
+             options:
+               defaultvalue: 0
+               firstmatchingcase: true
+               cases:
+               - where:
+                 - variable:
+                     name: GeoVaLs/water_area_fraction
+                   minvalue: 0.99
+                 value: 30
+               - where:
+                 - variable:
+                     name: GeoVaLs/land_area_fraction
+                   minvalue: 0.99
+                 value: 15
+               - where:
+                 - variable:
+                     name: GeoVaLs/ice_area_fraction
+                   minvalue: 0.99
+                 value: 20
+               - where:
+                 - variable:
+                     name: GeoVaLs/surface_snow_area_fraction
+                   minvalue: 0.99
+                 value: 15
+
+

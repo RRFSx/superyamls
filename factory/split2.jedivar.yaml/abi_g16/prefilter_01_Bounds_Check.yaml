@@ -1,0 +1,17 @@
+       # ---------------------------------------------------------------------------------------------------
+       # Step 1 : Satellite Zenith Angle check: remove observations with zenith angle larger than 65 degree
+       # ----------------------------------------------------------------------------------------------------
+       - filter: Bounds Check
+         filter variables:
+         - name: brightnessTemperature
+           channels: *abi_g16_channels
+         test variables:
+         - name: MetaData/sensorZenithAngle
+         maxvalue: 65.
+         actions:
+         - name: set
+           flag: ZenithAngleCheck
+         #- name: reject
+         - name: reduce obs space
+
+

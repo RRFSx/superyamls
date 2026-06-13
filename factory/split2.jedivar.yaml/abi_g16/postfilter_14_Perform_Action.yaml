@@ -1,0 +1,20 @@
+       # ----------------------------------------------------------------------------------------------------------
+       # Step 18: Error inflation: Surface Jacobians Check
+       # This obsFunction is designed to compute observation error inflation factor for brightness temperature as
+       # a function of weighted surface temperature jacobian and surface emissivity jacobian.
+       # -----------------------------------------------------------------------------------------------------------
+       - filter: Perform Action
+         filter variables:
+         - name: brightnessTemperature
+           channels: *abi_g16_channels
+         action:
+           name: inflate error
+           inflation variable:
+             name: ObsFunction/ObsErrorFactorSurfJacobianRad
+             channels: *abi_g16_channels
+             options:
+               channels: *abi_g16_channels
+               obserr_demisf: [0.01, 0.02, 0.03, 0.02, 0.03]
+               obserr_dtempf: [0.5, 2.0, 4.0, 2.0, 4.0]
+               sensor: abi_g16
+

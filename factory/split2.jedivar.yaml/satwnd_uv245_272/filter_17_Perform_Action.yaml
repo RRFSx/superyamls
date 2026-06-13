@@ -1,0 +1,17 @@
+         # Reject when pressure between 399 and 801 mb.
+         - filter: Perform Action
+           udescriptor: "pressure_range_check"
+           filter variables:
+           - name: windEastward
+           - name: windNorthward
+           where:
+           - variable: MetaData/pressure
+             minvalue: 39901.
+             maxvalue: 80099.
+           - variable: ObsType/windEastward
+             is_in: 245
+           - variable: MetaData/satelliteIdentifier
+             is_in: 272
+           action:
+             name: reject
+

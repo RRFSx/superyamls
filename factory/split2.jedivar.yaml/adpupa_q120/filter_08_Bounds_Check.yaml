@@ -1,0 +1,11 @@
+         # Bounds Check (ObsError)
+         - filter: Bounds Check
+           filter variables:
+           - name: specificHumidity
+           test variables:
+           - name:  ObsErrorData/specificHumidity
+           minvalue: 0.0
+           maxvalue: 1000
+           action:
+             name: reduce obs space
+

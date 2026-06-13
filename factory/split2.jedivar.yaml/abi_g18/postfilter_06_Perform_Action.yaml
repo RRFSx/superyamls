@@ -1,0 +1,16 @@
+       # -----------------------------------------------------------------------------------------------------------------------------------------------
+       # Step 13: Observation Error inflation: Model top Transmittance Check
+       # This obsfunction calculates the observation error inflation factor for satellite radiances as a function of model top-to-space transmittance.
+       # ------------------------------------------------------------------------------------------------------------------------------------------------
+       - filter: Perform Action
+         filter variables:
+         - name: brightnessTemperature
+           channels: *abi_g18_channels
+         action:
+           name: inflate error
+           inflation variable:
+             name: ObsFunction/ObsErrorFactorTransmitTopRad
+             channels: *abi_g18_channels
+             options:
+               channels: *abi_g18_channels
+

@@ -1,0 +1,8 @@
+         # Initial error assignment
+         - filter: Perform Action
+           filter variables:
+           - name: zenithTotalDelay
+           action:
+             name: assign error
+             error parameter: 0.01
+

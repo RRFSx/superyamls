@@ -1,0 +1,16 @@
+         # Re-assign err ObsErrorData <--- TempObsErrorData after gross error check.
+         - filter: Perform Action
+           apply at iterations: 0,1
+           filter variables:
+           - name: specificHumidity
+           action:
+             name: assign error
+             error function: TempObsErrorData/specificHumidity
+           where:
+           - variable:
+               name: TempObsErrorData/specificHumidity
+             value: is_valid
+           defer to post: true
+
+         #- filter: GOMsaver
+         #  filename: ./data/geovals/aircft_geovals_rrfs.nc

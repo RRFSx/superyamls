@@ -1,0 +1,29 @@
+       # ---------------------------------------------------------------------------------------------------
+       # Step 6 : Data Thinning (spatial and temporal thinning)
+       # ----------------------------------------------------------------------------------------------------
+       - filter: Gaussian Thinning
+         filter variables:
+         - name: brightnessTemperature
+           channels: *abi_g18_channels
+         #horizontal_mesh: 145
+         horizontal_mesh: 60
+         use_reduced_horizontal_grid: true
+         # Geographic Consistency Parameters
+         round_horizontal_bin_count_to_nearest: true
+         partition_longitude_bins_using_mesh: true
+         # Spatiotemporal Selection
+         distance_norm: maximum
+         #distance_norm: geodesic
+         seed_time: '@analysisDate@'
+         time_mesh: '@THINNING_TIME_MESH@'
+         time_min: '@THINNING_TIME_MIN@'
+         time_max: '@THINNING_TIME_MAX@'
+         priority_variable: DerivedMetaData/thinning_priority
+         #priority_variable: MetaData/cloudFree
+         actions:
+         - name: set
+           flag: Thinning
+           ignore: rejected observations
+         - name: reduce obs space
+         #- name: reject
+

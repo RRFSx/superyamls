@@ -1,0 +1,33 @@
+       # -------------------------------
+       # Step 0: Create Diagnostic Flags
+       # -------------------------------
+       - filter: Create Diagnostic Flags
+         filter variables:
+         - name: brightnessTemperature
+           channels: *cris-fsr_n20_channels
+         flags:
+         - name: ScanEdgeRemoval
+           initial value: false
+           force reinitialization: false
+         - name: Thinning
+           initial value: false
+           force reinitialization: false
+         - name: GeoDomainCheck
+           initial value: false
+           force reinitialization: false
+         - name: CloudDetectMinResidualIR
+           initial value: false
+           force reinitialization: false
+         - name: SurfaceTempJacobianCheck
+           initial value: false
+           force reinitialization: false
+         - name: GrossCheck
+           initial value: false
+           force reinitialization: false
+         - name: NearSSTRetCheckIR
+           initial value: false
+           force reinitialization: false
+         - name: UseflagCheck
+           initial value: false
+           force reinitialization: false
+

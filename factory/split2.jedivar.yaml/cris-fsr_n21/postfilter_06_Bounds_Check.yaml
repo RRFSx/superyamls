@@ -1,0 +1,21 @@
+       # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+       # Step 13: Surface Temperature Jacobian Check over Land, reduce influence of land pionts on window channels, surface temperaure jacobian oove land larger than 0.2, rejected
+       # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+       - filter: Bounds Check
+         filter variables:
+         - name: brightnessTemperature
+           channels: *cris-fsr_n21_channels
+         where:
+         - variable:
+             name: GeoVaLs/water_area_fraction
+           maxvalue: 0.99
+         test variables:
+         - name: ObsDiag/brightness_temperature_jacobian_skin_temperature_at_surface
+           channels: *cris-fsr_n21_channels
+         maxvalue: 0.2
+         actions:
+         - name: set
+           flag: SurfaceTempJacobianCheck
+           ignore: rejected observations
+         - name: reject
+

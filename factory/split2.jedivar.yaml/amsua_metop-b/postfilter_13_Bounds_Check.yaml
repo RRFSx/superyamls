@@ -1,0 +1,15 @@
+       #  Useflag check
+       - filter: Bounds Check
+         filter variables:
+         - name: brightnessTemperature
+           channels: *amsua_metop-b_channels
+         test variables:
+         - name: ObsFunction/ChannelUseflagCheckRad
+           channels: *amsua_metop-b_channels
+           options:
+             sensor: amsua_metop-b
+             channels: *amsua_metop-b_channels
+             use_flag: *amsua_metop-b_use_flag
+         minvalue: 1.0e-12
+         action:
+           name: reject

@@ -1,0 +1,19 @@
+         # Reject when abs(windNorthward) < 1.0 .and. abs(windEastward) < 1.0
+         - filter: Bounds Check
+           filter variables:
+           - name: windEastward
+           - name: windNorthward
+           minvalue: 1
+           where:
+           - variable:
+               name: AbsObsValue/windEastward
+             minvalue: 0
+             maxvalue: 1
+           - variable:
+               name: AbsObsValue/windNorthward
+             minvalue: 0
+             maxvalue: 1
+           where operator: and
+           action:
+             name: reject
+

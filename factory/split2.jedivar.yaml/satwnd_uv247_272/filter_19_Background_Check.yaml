@@ -1,0 +1,18 @@
+         # Gross Error Check (windEastward)
+         - filter: Background Check
+           udescriptor: "gross_error_check"
+           apply at iterations: 0,1
+           filter variables:
+           - name: windEastward
+           function absolute threshold:
+           - name: ObsFunction/WindsSPDBCheck
+             options:
+               wndtype:    [ 247 ]
+               cgross:     [ 2.5 ]
+               error_min:  [ 1.4 ]
+               error_max:  [ 5.0 ]
+               variable: windEastward
+           action:
+             name: reject
+           defer to post: true
+

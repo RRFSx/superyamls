@@ -1,0 +1,9 @@
+       # Step 0-A: Create Diagnostic Flags
+       - filter: Create Diagnostic Flags
+         filter variables:
+         - name: brightnessTemperature
+           channels: *amsua_metop-b_channels
+         flags:
+         - name: Thinning
+           initial value: false
+           force reinitialization: false

@@ -1,0 +1,15 @@
+       # Step 8: Observation Error Inflation based on Surface Jacobian Check
+       - filter: Variable Assignment
+         assignments:
+         - name: ObsErrorFactorSurfJacobian@DerivedMetaData
+           channels: *atms_n20_channels
+           type: float
+           function:
+             name: ObsErrorFactorSurfJacobianRad@ObsFunction
+             channels: *atms_n20_channels
+             options:
+               sensor: atms_n20
+               channels: *atms_n20_channels
+               obserr_demisf: [0.010, 0.020, 0.015, 0.020, 0.200]
+               obserr_dtempf: [0.500, 2.000, 1.000, 2.000, 4.500]
+

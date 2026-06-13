@@ -1,0 +1,26 @@
+       # Step 9: Situation Dependent Check
+       - filter: Variable Assignment
+         assignments:
+         - name: ObsErrorFactorSituDepend@DerivedMetaData
+           channels: *atms_n21_channels
+           type: float
+           function:
+             name: ObsErrorFactorSituDependMW@ObsFunction
+             channels: *atms_n21_channels
+             options:
+               sensor: atms_n21
+               channels: *atms_n21_channels
+               clwbkg_function:
+                 name: CLWRetFromBkg@DerivedMetaData
+               clwobs_function:
+                 name: CLWRetFromObs@DerivedMetaData
+               scatobs_function:
+                 name: SIRetFromObs@DerivedMetaData
+               clwmatchidx_function:
+                 name: CLWMatchIndex@DerivedMetaData
+                 channels: *atms_n21_channels
+               obserr_function:
+                 name: InitialObsError@DerivedMetaData
+                 channels: *atms_n21_channels
+               obserr_clearsky: *atms_n21_error
+

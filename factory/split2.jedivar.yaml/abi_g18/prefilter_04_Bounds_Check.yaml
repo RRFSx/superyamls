@@ -1,0 +1,16 @@
+       # ---------------------------------------------------------------------------------------------------
+       # Step 4 :  BT range check (sanity check)
+       # ----------------------------------------------------------------------------------------------------
+       - filter: Bounds Check
+         filter variables:
+         - name: brightnessTemperature
+           channels: *abi_g18_channels
+         minvalue: 0.0
+         maxvalue: 1000.0
+         actions:
+         - name: set
+           flag: BTrangeCheck
+           ignore: rejected observations
+         #- name: reject
+         - name: reduce obs space
+

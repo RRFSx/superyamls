@@ -1,0 +1,6 @@
+       - filter: Background Check
+         filter variables:
+         - name: equivalentReflectivityFactor
+         threshold: 12.0
+         action:
+           name: reject
