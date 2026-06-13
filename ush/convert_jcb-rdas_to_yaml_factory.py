@@ -75,20 +75,21 @@ dcObserver = {
     }
 
 #
-# read observers under jcb-rdas, make modifications and output to transition1/
+# read observers under jcb-rdas, make modifications and output to transition0/
 #
 for key, value in dcObserver.items():
     real_key = key
     if key.startswith("rad_"):
         real_key = key[4:]
     finput = "./external/jcb-rdas/observations/atmosphere/" + value + ".yaml.j2"
-    outfile = open("./transition1/" + value + ".yaml.j2", 'w')
-    # link to transition2
-    os.makedirs('./transition2', exist_ok=True)
-    dest = f"./transition2/{real_key}.yaml"
+    os.makedirs('./transition0', exist_ok=True)
+    outfile = open("./transition0/" + value + ".yaml.j2", 'w')
+    # link to transition1
+    os.makedirs('./transition1', exist_ok=True)
+    dest = f"./transition1/{real_key}.yaml"
     if os.path.exists(dest):
         os.remove(dest)
-    os.symlink(f"../transition1/{value}.yaml.j2", dest)
+    os.symlink(f"../transition0/{value}.yaml.j2", dest)
     # read all lines from an observer
     block = []
     with open(finput, 'r') as infile:
@@ -161,5 +162,5 @@ for key, value in dcObserver.items():
 #
 # print out information
 #
-print("files under 'transition1/' updated")
-print("links under 'transition2/' made")
+print("files under 'transition0/' created")
+print("links under 'transition1/' made")
